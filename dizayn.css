@@ -1,0 +1,287 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    background: #050510;
+    height: 100vh;
+    color: #fff;
+}
+
+/* Canvas (3D orqa fon) */
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Asosiy kontent */
+.content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30px 50px;
+}
+
+/* ========== LOGOTIP (chap yuqori) ========== */
+.logo {
+    position: fixed;
+    top: 30px;
+    left: 40px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    padding: 10px 25px;
+    border-radius: 50px;
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    animation: float 3s ease-in-out infinite;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.logo-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, #00ffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo-text span {
+    background: linear-gradient(135deg, #ff00ff, #ffff00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ========== MARKAZ (o'quv markaz nomi) ========== */
+.center-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 20;
+    width: 100%;
+}
+
+.main-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 95px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    background: linear-gradient(135deg, #00ffff, #ff00ff, #ffff00, #00ff00);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 5s ease infinite, titleGlow 2s ease-in-out infinite;
+    text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+}
+
+.subtitle {
+    font-size: 28px;
+    letter-spacing: 5px;
+    margin-top: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    animation: fadeInUp 1.5s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    word-break: keep-all;
+}
+
+.typing-text {
+    font-size: 20px;
+    margin-top: 35px;
+    color: #00ffff;
+    letter-spacing: 2px;
+}
+
+.cursor {
+    display: inline-block;
+    width: 3px;
+    background: #00ffff;
+    margin-left: 5px;
+    animation: blink 1s infinite;
+}
+
+/* ========== SIZNING RASMINGIZ (o'ng pastki) ========== */
+.owner-section {
+    position: fixed;
+    bottom: 30px;
+    right: 40px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    padding: 8px 20px 8px 8px;
+    border-radius: 60px;
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    animation: slideInRight 1s ease;
+}
+
+.owner-image {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00ffff, #ff00ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulseRing 2s ease-in-out infinite;
+    overflow: hidden;
+}
+
+#owner-img {
+    width: 51px;
+    height: 51px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+}
+
+.owner-info {
+    text-align: right;
+}
+
+.owner-name {
+    font-size: 14px;
+    color: #00ffff;
+    font-weight: 600;
+}
+
+.owner-title {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+/* ========== SCROLL INDICATOR ========== */
+.scroll-indicator {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    text-align: center;
+    animation: bounce 2s infinite;
+    cursor: pointer;
+}
+
+.scroll-indicator span {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    opacity: 0.7;
+}
+
+.scroll-indicator i {
+    font-size: 20px;
+    color: #00ffff;
+}
+
+/* ========== ANIMATSIYALAR ========== */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes titleGlow {
+    0%, 100% { text-shadow: 0 0 30px rgba(0, 255, 255, 0.5); }
+    50% { text-shadow: 0 0 60px rgba(255, 0, 255, 0.5); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+}
+
+@keyframes pulseRing {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 992px) {
+    .main-title { font-size: 65px; }
+    .subtitle { font-size: 20px; letter-spacing: 3px; }
+}
+
+@media (max-width: 768px) {
+    .main-title { font-size: 40px; letter-spacing: 3px; }
+    .subtitle { font-size: 14px; letter-spacing: 2px; margin-top: 10px; }
+    .logo { top: 15px; left: 20px; padding: 6px 15px; }
+    .logo-text { font-size: 16px; }
+    .logo-icon { width: 35px; height: 35px; }
+    .owner-section { bottom: 15px; right: 20px; padding: 5px 12px 5px 5px; }
+    .owner-image { width: 45px; height: 45px; }
+    #owner-img { width: 41px; height: 41px; }
+    .owner-name { font-size: 10px; }
+    .owner-title { font-size: 8px; }
+    .typing-text { font-size: 12px; margin-top: 20px; }
+    .scroll-indicator { bottom: 15px; }
+}
