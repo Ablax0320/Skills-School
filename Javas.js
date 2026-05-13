@@ -1,577 +1,311 @@
-// ============================================
-// SKILLS SCHOOL - ADVANCED JAVASCRIPT
-// Professional Interactive Features & Animations
-// ============================================
+import * as THREE from 'three';
 
-// DOM Elements Cache
-const menuToggle = document.querySelector('.menu-toggle');
-const navLinks = document.querySelector('.nav-links');
-const navbar = document.querySelector('.navbar');
-const navItems = document.querySelectorAll('.nav-link');
-const filterBtns = document.querySelectorAll('.filter-btn');
-const courseCards = document.querySelectorAll('.course-card');
-const contactForm = document.querySelector('.contact-form');
-const heroSection = document.querySelector('.hero');
+// ========== SETUP ==========
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x020210);
+scene.fog = new THREE.FogExp2(0x020210, 0.0008);
 
-// ============================================
-// 1. MOBILE MENU TOGGLE
-// ============================================
-if (menuToggle) {
-    menuToggle.addEventListener('click', () => {
-        menuToggle.classList.toggle('active');
-        navLinks.classList.toggle('active');
-        document.body.classList.toggle('no-scroll');
-    });
+// Camera
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 5, 18);
+camera.lookAt(0, 0, 0);
 
-    // Close menu on link click
-    navItems.forEach(link => {
-        link.addEventListener('click', () => {
-            menuToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-            document.body.classList.remove('no-scroll');
-        });
-    });
-}
+// Renderer
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
 
-// ============================================
-// 2. NAVBAR SCROLL EFFECT
-// ============================================
-let lastScrollTop = 0;
-const navbarHeight = navbar?.offsetHeight || 80;
+// ========== YORUG'LIK ==========
+// Ambient light
+const ambientLight = new THREE.AmbientLight(0x222222);
+scene.add(ambientLight);
 
-window.addEventListener('scroll', () => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+// Quyosh nuri (point light)
+const sunLight = new THREE.PointLight(0xffaa66, 2, 50);
+sunLight.position.set(0, 0, 0);
+scene.add(sunLight);
 
-    if (scrollTop > 100) {
-        navbar?.classList.add('scrolled');
-        navbar.style.boxShadow = '0 10px 30px rgba(0, 180, 255, 0.3)';
-    } else {
-        navbar?.classList.remove('scrolled');
-        navbar.style.boxShadow = 'var(--shadow-lg)';
-    }
+// Qo'shimcha yorug'liklar
+const fillLight = new THREE.DirectionalLight(0x4488ff, 0.3);
+fillLight.position.set(1, 2, 1);
+scene.add(fillLight);
 
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+const backLight = new THREE.PointLight(0xff66cc, 0.2);
+backLight.position.set(-2, 1, -3);
+scene.add(backLight);
+
+// ========== QUYOSH (Sun) ==========
+const sunGeometry = new THREE.SphereGeometry(1.2, 128, 128);
+const sunMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffaa55,
+    emissive: 0xff4411,
+    emissiveIntensity: 1.2,
+    metalness: 0.1,
+    roughness: 0.3
 });
+const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+scene.add(sun);
 
-// ============================================
-// 3. SMOOTH SCROLL NAVIGATION
-// ============================================
-navItems.forEach(link => {
-    link.addEventListener('click', (e) => {
-        const href = link.getAttribute('href');
-        if (href.startsWith('#')) {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                const offsetTop = target.offsetTop - navbarHeight;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        }
-    });
+// Quyosh atrofidagi yorug'lik sferasi (glow effect)
+const sunGlowGeometry = new THREE.SphereGeometry(1.35, 64, 64);
+const sunGlowMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff8844,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.BackSide
 });
+const sunGlow = new THREE.Mesh(sunGlowGeometry, sunGlowMaterial);
+scene.add(sunGlow);
 
-// ============================================
-// 4. COURSE FILTERING SYSTEM
-// ============================================
-if (filterBtns.length > 0) {
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Remove active class from all buttons
-            filterBtns.forEach(b => b.classList.remove('active'));
-            
-            // Add active class to clicked button
-            btn.classList.add('active');
+// ========== SAYYORALAR MA'LUMOTLARI ==========
+const planets = [
+    { name: 'Merkuriy', radius: 0.12, distance: 2.0, color: 0xaa8866, speed: 0.025, detail: 32 },
+    { name: 'Venera',   radius: 0.15, distance: 2.6, color: 0xccaa77, speed: 0.018, detail: 48 },
+    { name: 'Yer',      radius: 0.16, distance: 3.2, color: 0x4488ff, speed: 0.015, detail: 64 },
+    { name: 'Mars',     radius: 0.14, distance: 3.8, color: 0xcc6644, speed: 0.012, detail: 48 },
+    { name: 'Yupiter',  radius: 0.32, distance: 4.8, color: 0xccaa88, speed: 0.008, detail: 96 },
+    { name: 'Saturn',   radius: 0.28, distance: 5.6, color: 0xddbb99, speed: 0.006, detail: 96 },
+    { name: 'Uran',     radius: 0.22, distance: 6.4, color: 0x88ccdd, speed: 0.005, detail: 64 },
+    { name: 'Neptun',   radius: 0.22, distance: 7.2, color: 0x4488aa, speed: 0.004, detail: 64 }
+];
 
-            const filterValue = btn.textContent.toLowerCase().trim();
+const planetMeshes = [];
+const orbits = [];
 
-            // Filter courses
-            courseCards.forEach(card => {
-                const courseBadge = card.querySelector('.course-badge');
-                const badgeText = courseBadge ? courseBadge.textContent.toLowerCase().trim() : '';
-                
-                if (filterValue === 'hammasі' || filterValue === 'все' || filterValue === 'all') {
-                    card.style.display = 'block';
-                    card.classList.add('fadeInAnimation');
-                    setTimeout(() => card.classList.remove('fadeInAnimation'), 800);
-                } else if (badgeText.includes(filterValue) || 
-                           card.querySelector('h3').textContent.toLowerCase().includes(filterValue)) {
-                    card.style.display = 'block';
-                    card.classList.add('fadeInAnimation');
-                    setTimeout(() => card.classList.remove('fadeInAnimation'), 800);
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            // Add smooth animation
-            courseCards.forEach(card => {
-                if (card.style.display !== 'none') {
-                    card.style.animation = 'scaleIn3D 0.8s ease-out';
-                }
-            });
-        });
+// Sayyoralarni yaratish
+planets.forEach((planet, index) => {
+    // Sayyora sferasi
+    const geometry = new THREE.SphereGeometry(planet.radius, planet.detail, planet.detail);
+    const material = new THREE.MeshStandardMaterial({
+        color: planet.color,
+        metalness: 0.4,
+        roughness: 0.6,
+        emissive: 0x000000
     });
-
-    // Set default filter to "All"
-    const allBtn = Array.from(filterBtns).find(btn => 
-        btn.textContent.toLowerCase().includes('hammasі') || 
-        btn.textContent.toLowerCase().includes('барча') ||
-        btn.textContent.toLowerCase().includes('all')
-    );
-    if (allBtn) allBtn.click();
-}
-
-// ============================================
-// 5. MOUSE TILT EFFECT FOR CARDS
-// ============================================
-function addMouseTiltEffect(element) {
-    element.addEventListener('mousemove', (e) => {
-        const rect = element.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const xPercent = (x / rect.width) * 100;
-        const yPercent = (y / rect.height) * 100;
-
-        const xRotate = (yPercent - 50) * 0.5;
-        const yRotate = (50 - xPercent) * 0.5;
-
-        element.style.transform = `perspective(1000px) rotateX(${xRotate}deg) rotateY(${yRotate}deg) translateZ(20px)`;
-    });
-
-    element.addEventListener('mouseleave', () => {
-        element.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
-    });
-}
-
-courseCards.forEach(card => {
-    addMouseTiltEffect(card);
-});
-
-// Apply to feature items
-const featureItems = document.querySelectorAll('.feature-item');
-featureItems.forEach(item => {
-    addMouseTiltEffect(item);
-});
-
-// Apply to testimonial cards
-const testimonialCards = document.querySelectorAll('.testimonial-card');
-testimonialCards.forEach(card => {
-    addMouseTiltEffect(card);
-});
-
-// ============================================
-// 6. FORM VALIDATION & SUBMISSION
-// ============================================
-if (contactForm) {
-    const inputs = contactForm.querySelectorAll('input, textarea, select');
-    const submitBtn = contactForm.querySelector('.submit-btn');
-
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        // Validation
-        let isValid = true;
-        inputs.forEach(input => {
-            if (!input.value.trim()) {
-                input.style.borderColor = 'var(--danger)';
-                isValid = false;
-            } else {
-                input.style.borderColor = 'var(--border)';
-            }
-        });
-
-        if (isValid) {
-            // Show success animation
-            submitBtn.textContent = '✓ Jo\'natildi!';
-            submitBtn.style.background = 'linear-gradient(135deg, var(--success), #00cc66)';
-            
-            // Collect form data
-            const formData = {
-                name: contactForm.querySelector('input[type="text"]').value,
-                email: contactForm.querySelector('input[type="email"]').value,
-                course: contactForm.querySelector('select') ? contactForm.querySelector('select').value : 'N/A',
-                message: contactForm.querySelector('textarea').value,
-                timestamp: new Date().toLocaleString('uz-UZ')
-            };
-
-            // Log form data (in production, send to server)
-            console.log('Form Data:', formData);
-            
-            // Reset form after 2 seconds
-            setTimeout(() => {
-                contactForm.reset();
-                submitBtn.textContent = 'Jo\'natish';
-                submitBtn.style.background = 'linear-gradient(135deg, var(--accent), var(--accent-glow))';
-                inputs.forEach(input => {
-                    input.style.borderColor = 'var(--border)';
-                });
-            }, 2000);
-        }
-    });
-
-    // Real-time validation
-    inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            input.style.borderColor = 'var(--accent)';
-        });
-
-        input.addEventListener('blur', () => {
-            if (!input.value.trim()) {
-                input.style.borderColor = 'var(--danger)';
-            } else {
-                input.style.borderColor = 'var(--border)';
-            }
-        });
-    });
-}
-
-// ============================================
-// 7. INTERSECTION OBSERVER FOR ANIMATIONS
-// ============================================
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.animation = 'fadeInUp3D 1s ease-out forwards';
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Observe all animated elements
-document.querySelectorAll('.course-card, .feature-item, .testimonial-card, .stat-item').forEach(el => {
-    observer.observe(el);
-});
-
-// ============================================
-// 8. CANVAS PARTICLE ANIMATION (Hero Section)
-// ============================================
-function createParticleAnimation() {
-    const canvas = document.createElement('canvas');
-    canvas.id = 'particleCanvas';
-    canvas.style.position = 'absolute';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.zIndex = '5';
-    canvas.style.pointerEvents = 'none';
+    const planetMesh = new THREE.Mesh(geometry, material);
+    planetMesh.userData = {
+        distance: planet.distance,
+        speed: planet.speed,
+        angle: Math.random() * Math.PI * 2,
+        name: planet.name
+    };
     
-    if (heroSection) {
-        heroSection.appendChild(canvas);
-    }
-
-    const ctx = canvas.getContext('2d');
+    // Boshlang'ich pozitsiya
+    planetMesh.position.x = planet.distance;
+    scene.add(planetMesh);
     
-    canvas.width = window.innerWidth;
-    canvas.height = heroSection ? heroSection.offsetHeight : window.innerHeight;
-
-    // Particle system
-    const particles = [];
-    const particleCount = 50;
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 2;
-            this.vy = (Math.random() - 0.5) * 2;
-            this.radius = Math.random() * 2 + 1;
-            this.opacity = Math.random() * 0.5 + 0.2;
-        }
-
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-
-            // Boundary wrapping
-            if (this.x < 0) this.x = canvas.width;
-            if (this.x > canvas.width) this.x = 0;
-            if (this.y < 0) this.y = canvas.height;
-            if (this.y > canvas.height) this.y = 0;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(0, 180, 255, ${this.opacity})`;
-            ctx.fill();
-        }
-    }
-
-    // Initialize particles
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
-
-    // Animation loop
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach(particle => {
-            particle.update();
-            particle.draw();
-
-            // Draw connections between nearby particles
-            particles.forEach(other => {
-                const dx = particle.x - other.x;
-                const dy = particle.y - other.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 150) {
-                    ctx.beginPath();
-                    ctx.moveTo(particle.x, particle.y);
-                    ctx.lineTo(other.x, other.y);
-                    ctx.strokeStyle = `rgba(0, 180, 255, ${0.1 * (1 - distance / 150)})`;
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                }
-            });
-        });
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = heroSection ? heroSection.offsetHeight : window.innerHeight;
-    });
-}
-
-// Only create particles on desktop
-if (window.innerWidth > 768) {
-    createParticleAnimation();
-}
-
-// ============================================
-// 9. ACTIVE NAV LINK INDICATOR
-// ============================================
-function updateActiveNavLink() {
-    const sections = document.querySelectorAll('section[id]');
+    // Orbit chizig'i (halqa shaklida)
+    const orbitPoints = [];
+    const orbitRadius = planet.distance;
+    const orbitSegments = 128;
     
-    window.addEventListener('scroll', () => {
-        let current = '';
-
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            if (pageYOffset >= sectionTop - 200) {
-                current = section.getAttribute('id');
-            }
+    for (let i = 0; i <= orbitSegments; i++) {
+        const angle = (i / orbitSegments) * Math.PI * 2;
+        const x = Math.cos(angle) * orbitRadius;
+        const z = Math.sin(angle) * orbitRadius;
+        orbitPoints.push(new THREE.Vector3(x, 0, z));
+    }
+    
+    const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+    const orbitMaterial = new THREE.LineBasicMaterial({ color: 0x4488aa, transparent: true, opacity: 0.3 });
+    const orbitLine = new THREE.LineLoop(orbitGeometry, orbitMaterial);
+    scene.add(orbitLine);
+    
+    planetMeshes.push(planetMesh);
+    orbits.push(orbitLine);
+    
+    // Saturn uchun halqa
+    if (planet.name === 'Saturn') {
+        const ringGeometry = new THREE.TorusGeometry(planet.radius * 1.6, 0.06, 64, 200);
+        const ringMaterial = new THREE.MeshStandardMaterial({
+            color: 0xccaa88,
+            metalness: 0.7,
+            roughness: 0.4,
+            transparent: true,
+            opacity: 0.7
         });
+        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+        planetMesh.add(ring);
+        ring.rotation.x = Math.PI / 2.2;
+        ring.rotation.z = 0.3;
+    }
+});
 
-        navItems.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href').slice(1) === current) {
-                link.classList.add('active');
-                link.style.color = 'var(--accent)';
-            } else {
-                link.style.color = 'var(--primary)';
-            }
-        });
-    });
+// ========== ASTEROID HALQASI (Mars va Yupiter oralig'ida) ==========
+const asteroidCount = 800;
+const asteroidGroup = new THREE.Group();
+const asteroidGeometry = new THREE.BufferGeometry();
+const asteroidPositions = new Float32Array(asteroidCount * 3);
+
+for (let i = 0; i < asteroidCount; i++) {
+    const radius = 4.2 + Math.random() * 0.8;
+    const angle = Math.random() * Math.PI * 2;
+    const yOffset = (Math.random() - 0.5) * 0.8;
+    
+    asteroidPositions[i * 3] = Math.cos(angle) * radius;
+    asteroidPositions[i * 3 + 1] = yOffset;
+    asteroidPositions[i * 3 + 2] = Math.sin(angle) * radius;
 }
 
-updateActiveNavLink();
+asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPositions, 3));
 
-// ============================================
-// 10. TYPING EFFECT FOR HERO TITLE
-// ============================================
-function typewriterEffect() {
-    const titleWords = document.querySelectorAll('.hero-title .word');
-    let totalDelay = 0;
+const asteroidMaterial = new THREE.PointsMaterial({
+    color: 0xaa9977,
+    size: 0.04,
+    transparent: true
+});
 
-    titleWords.forEach((word, index) => {
-        const letters = word.textContent.split('');
-        word.textContent = '';
+const asteroidField = new THREE.Points(asteroidGeometry, asteroidMaterial);
+scene.add(asteroidField);
+
+// ========== YULDUZLAR (Stars Background) ==========
+const starCount = 2000;
+const starsGeometry = new THREE.BufferGeometry();
+const starPositions = new Float32Array(starCount * 3);
+
+for (let i = 0; i < starCount; i++) {
+    starPositions[i * 3] = (Math.random() - 0.5) * 400;
+    starPositions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+    starPositions[i * 3 + 2] = (Math.random() - 0.5) * 150 - 50;
+}
+
+starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+
+const starMaterial = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 0.08,
+    transparent: true,
+    opacity: 0.7
+});
+
+const stars = new THREE.Points(starsGeometry, starMaterial);
+scene.add(stars);
+
+// Ikkinchi darajali kichik yulduzlar (uzoq)
+const starCount2 = 800;
+const starsGeometry2 = new THREE.BufferGeometry();
+const starPositions2 = new Float32Array(starCount2 * 3);
+
+for (let i = 0; i < starCount2; i++) {
+    starPositions2[i * 3] = (Math.random() - 0.5) * 600;
+    starPositions2[i * 3 + 1] = (Math.random() - 0.5) * 300;
+    starPositions2[i * 3 + 2] = (Math.random() - 0.5) * 200 - 100;
+}
+
+starsGeometry2.setAttribute('position', new THREE.BufferAttribute(starPositions2, 3));
+
+const starMaterial2 = new THREE.PointsMaterial({
+    color: 0xaaddff,
+    size: 0.05,
+    transparent: true,
+    opacity: 0.5
+});
+
+const stars2 = new THREE.Points(starsGeometry2, starMaterial2);
+scene.add(stars2);
+
+// ========== ZARRALAR (uzoq galaktika effekti) ==========
+const particleCount = 4000;
+const particlesGeometry = new THREE.BufferGeometry();
+const particlePositions = new Float32Array(particleCount * 3);
+
+for (let i = 0; i < particleCount; i++) {
+    particlePositions[i * 3] = (Math.random() - 0.5) * 80;
+    particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+    particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 60 - 20;
+}
+
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+
+const particleMaterial = new THREE.PointsMaterial({
+    color: 0x88aaff,
+    size: 0.03,
+    transparent: true,
+    opacity: 0.4,
+    blending: THREE.AdditiveBlending
+});
+
+const particles = new THREE.Points(particlesGeometry, particleMaterial);
+scene.add(particles);
+
+// ========== ANIMATSIYA ==========
+let time = 0;
+
+function animate() {
+    requestAnimationFrame(animate);
+    time += 0.008;
+    
+    // Quyoshning aylanishi va porlashi
+    sun.rotation.y += 0.004;
+    sunGlow.rotation.y += 0.001;
+    
+    // Quyosh nuri intensivligining o'zgarishi
+    const intensity = 1.8 + Math.sin(time * 3) * 0.2;
+    sunLight.intensity = intensity;
+    
+    // Sayyoralarni harakatlantirish
+    planetMeshes.forEach(planet => {
+        const data = planet.userData;
+        data.angle += data.speed;
         
-        letters.forEach((letter, letterIndex) => {
-            const span = document.createElement('span');
-            span.textContent = letter;
-            span.style.display = 'inline-block';
-            span.style.animation = `fadeInUp3D 0.1s ease-out forwards`;
-            span.style.animationDelay = `${totalDelay + letterIndex * 50}ms`;
-            word.appendChild(span);
-        });
-
-        totalDelay += letters.length * 50 + 200;
+        const x = Math.cos(data.angle) * data.distance;
+        const z = Math.sin(data.angle) * data.distance;
+        
+        planet.position.set(x, 0, z);
+        
+        // Sayyoraning o'z o'qi atrofida aylanishi
+        planet.rotation.y += 0.01;
     });
-}
-
-// Call typewriter effect on page load
-window.addEventListener('load', () => {
-    typewriterEffect();
-});
-
-// ============================================
-// 11. SCROLL PROGRESS BAR
-// ============================================
-function createScrollProgressBar() {
-    const progressBar = document.createElement('div');
-    progressBar.id = 'scrollProgressBar';
-    progressBar.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--accent), var(--accent-glow));
-        width: 0%;
-        z-index: 999;
-        box-shadow: 0 0 20px rgba(0, 180, 255, 0.5);
-        transition: width 0.1s linear;
-    `;
-    document.body.appendChild(progressBar);
-
-    window.addEventListener('scroll', () => {
-        const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-        progressBar.style.width = scrollPercent + '%';
-    });
-}
-
-createScrollProgressBar();
-
-// ============================================
-// 12. SMOOTH FADE IN ON PAGE LOAD
-// ============================================
-window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease-in';
     
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
-});
-
-// ============================================
-// 13. KEYBOARD SHORTCUTS
-// ============================================
-document.addEventListener('keydown', (e) => {
-    // Alt + M: Toggle menu
-    if (e.altKey && e.key === 'm') {
-        if (menuToggle) menuToggle.click();
-    }
-
-    // Alt + H: Go to home
-    if (e.altKey && e.key === 'h') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // Alt + C: Go to courses
-    if (e.altKey && e.key === 'c') {
-        const coursesSection = document.getElementById('courses');
-        if (coursesSection) {
-            coursesSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-});
-
-// ============================================
-// 14. UTILITY FUNCTIONS
-// ============================================
-
-// Debounce function for performance
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Throttle function for performance
-function throttle(func, limit) {
-    let inThrottle;
-    return function(...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
-}
-
-// Add active state to course cards on click
-courseCards.forEach(card => {
-    card.addEventListener('click', function() {
-        courseCards.forEach(c => c.style.borderColor = 'var(--border)');
-        this.style.borderColor = 'var(--accent)';
-    });
-});
-
-// ============================================
-// 15. PERFORMANCE OPTIMIZATION
-// ============================================
-
-// Lazy load images
-const images = document.querySelectorAll('img[data-src]');
-const imageObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
-            observer.unobserve(img);
-        }
-    });
-});
-
-images.forEach(img => imageObserver.observe(img));
-
-// ============================================
-// 16. CONSOLE GREETING
-// ============================================
-console.log('%c🚀 Skills School - Professional IT Ta\'limi', 'color: #00b4ff; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px rgba(0,180,255,0.5)');
-console.log('%cMukkammal 3D animatsiyalar va professional design!', 'color: #00ffcc; font-size: 14px; font-style: italic');
-console.log('%cKeyboard Shortcuts: Alt+M (Menu), Alt+H (Home), Alt+C (Courses)', 'color: #aaaaaa; font-size: 12px');
-
-// ============================================
-// 17. INITIALIZATION ON DOM READY
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('✓ Skills School fully loaded and interactive!');
+    // Asteroid halqasini aylantirish
+    asteroidField.rotation.y += 0.002;
     
-    // Add animations to all elements
-    const animatedElements = document.querySelectorAll('[data-animate]');
-    animatedElements.forEach((el, index) => {
-        el.style.animation = `fadeInUp3D 1s ease-out forwards`;
-        el.style.animationDelay = `${index * 0.1}s`;
-    });
-});
-
-// ============================================
-// 18. SMOOTH SCROLL POLYFILL
-// ============================================
-if (!('scrollBehavior' in document.documentElement.style)) {
-    window.addEventListener('click', (e) => {
-        const href = e.target.getAttribute('href');
-        if (href && href.startsWith('#')) {
-            const target = document.querySelector(href);
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-                e.preventDefault();
-            }
-        }
-    });
+    // Yulduzlarni sekin aylantirish
+    stars.rotation.y += 0.0002;
+    stars.rotation.x += 0.0001;
+    stars2.rotation.y -= 0.00015;
+    
+    // Zarralarni aylantirish
+    particles.rotation.y += 0.0003;
+    particles.rotation.x += 0.0002;
+    
+    // Kamerani sekin harakatlantirish (sayyoralarni kuzatish effekti)
+    camera.position.x += (Math.sin(time * 0.1) * 0.5 - camera.position.x) * 0.02;
+    camera.position.y += (Math.sin(time * 0.15) * 0.3 - camera.position.y) * 0.02;
+    camera.lookAt(0, 0, 0);
+    
+    renderer.render(scene, camera);
 }
 
-// Export functions for external use if needed
-window.SkillsSchool = {
-    debounce,
-    throttle,
-    createParticleAnimation,
-    updateActiveNavLink,
-    typewriterEffect
-};
+animate();
+
+// ========== WINDOW RESIZE ==========
+window.addEventListener('resize', onWindowResize, false);
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// ========== MOUSE INTERAKSIYASI ==========
+let mouseX = 0, mouseY = 0;
+let targetX = 0, targetY = 0;
+
+document.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+    targetX = mouseX * 0.8;
+    targetY = mouseY * 0.5;
+});
+
+function updateCameraTarget() {
+    camera.position.x += (targetX - camera.position.x) * 0.03;
+    camera.position.y += (-targetY - camera.position.y) * 0.03;
+    camera.lookAt(0, 0, 0);
+    requestAnimationFrame(updateCameraTarget);
+}
+updateCameraTarget();
+
+console.log('🚀 Realistik Quyosh tizimi ishga tushdi!');
