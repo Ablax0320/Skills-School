@@ -1,482 +1,318 @@
-// ============================================
-// SKILLS SCHOOL - JAVASCRIPT FUNCTIONALITY
-// Interactive features va animations
-// ============================================
+/* ============================================
+   JAVASCRIPT - ADVANCED INTERACTIVITY
+   ============================================ */
+
+// Course Data
+const coursesData = [
+    {
+        id: 1,
+        title: "Computer Science",
+        description: "Kompyuter fanining asosiy tushunchalari va nazariyalari",
+        weeks: 12,
+        level: "beginner",
+        price: "Bepul",
+        badge: "Asosi"
+    },
+    {
+        id: 2,
+        title: "Algoritmlar va Dasturlash Asoslari",
+        description: "Mustahkam algoritm tuzish va problem-solving mahorati",
+        weeks: 16,
+        level: "intermediate",
+        price: "450.000",
+        badge: "Muhim"
+    },
+    {
+        id: 3,
+        title: "C++ Dasturlash",
+        description: "C++ da yuqori samarali dasturlar yozish o'rgatiladi",
+        weeks: 14,
+        level: "intermediate",
+        price: "500.000",
+        badge: "Texnik"
+    },
+    {
+        id: 4,
+        title: "Python Dasturlash",
+        description: "Python bilan yangi dunyoni kashfining o'rgatiladi",
+        weeks: 12,
+        level: "beginner",
+        price: "Bepul",
+        badge: "Boshlash"
+    },
+    {
+        id: 5,
+        title: "Web Dasturlash",
+        description: "HTML, CSS, JavaScript bilan veb-saytlar yaratish",
+        weeks: 16,
+        level: "intermediate",
+        price: "550.000",
+        badge: "Zamonaviy"
+    },
+    {
+        id: 6,
+        title: "Ma'lumotlar Bazasi (SQL)",
+        description: "SQL va relational databases bilan ishlash",
+        weeks: 10,
+        level: "intermediate",
+        price: "400.000",
+        badge: "Muhim"
+    },
+    {
+        id: 7,
+        title: "Ma'lumotlar Tuzilmasi",
+        description: "Array, Stack, Queue, Tree, Graph va boshqalar",
+        weeks: 14,
+        level: "advanced",
+        price: "600.000",
+        badge: "Texnik"
+    },
+    {
+        id: 8,
+        title: "Linux, Ubuntu va Cybersecurity",
+        description: "Tizim administratsiyasi va xavfsizlik asoslari",
+        weeks: 18,
+        level: "advanced",
+        price: "750.000",
+        badge: "Xavfsizlik"
+    }
+];
 
 // DOM Elements
-const courseCards = document.querySelectorAll('.course-card');
-const contactForm = document.querySelector('.contact-form');
-const navLinks = document.querySelectorAll('.nav-link');
-const ctaButton = document.querySelector('.cta-button');
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+const ctaButton = document.getElementById('ctaButton');
+const coursesGrid = document.getElementById('coursesGrid');
+const filterButtons = document.querySelectorAll('.filter-btn');
+const contactForm = document.getElementById('contactForm');
 
-// ============================================
-// 1. SMOOTH SCROLL & NAVBAR EFFECTS
-// ============================================
-
-// Navbar shadow on scroll
-let lastScrollTop = 0;
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    if (scrollTop > 50) {
-        navbar.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.12)';
-    } else {
-        navbar.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.08)';
-    }
-    
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    renderCourses('all');
+    setupEventListeners();
+    createCanvasAnimation();
 });
 
-// Active nav link on scroll
-window.addEventListener('scroll', () => {
-    let current = '';
-    
-    const sections = document.querySelectorAll('section');
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        if (scrollY >= sectionTop - 200) {
-            current = section.getAttribute('id');
-        }
-    });
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href').slice(1) === current) {
-            link.style.color = '#0066cc';
-        } else {
-            link.style.color = '';
-        }
+// Hamburger Menu
+hamburger.addEventListener('click', function() {
+    navLinks.classList.toggle('active');
+    hamburger.classList.toggle('active');
+});
+
+// Navigation Links
+const navLinkItems = document.querySelectorAll('.nav-link');
+navLinkItems.forEach(link => {
+    link.addEventListener('click', function() {
+        navLinks.classList.remove('active');
+        hamburger.classList.remove('active');
     });
 });
 
-// ============================================
-// 2. COURSE CARD INTERACTIONS
-// ============================================
-
-courseCards.forEach(card => {
-    // Hover animation
-    card.addEventListener('mouseenter', function() {
-        this.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-        
-        // Add glow effect
-        const courseName = this.querySelector('h3').textContent;
-        console.log('Kurs tanlanmoqda:', courseName);
-    });
+// Render Courses
+function renderCourses(filter) {
+    coursesGrid.innerHTML = '';
     
-    // Click animation
-    card.addEventListener('click', function() {
-        const courseName = this.querySelector('h3').textContent;
-        const courseMeta = this.querySelector('.course-meta').textContent;
-        
-        // Show toast notification
-        showNotification(`"${courseName}" kursiga qiziqtiraksiz!`);
-        
-        // Add ripple effect
-        createRipple(event);
+    const filteredCourses = filter === 'all' 
+        ? coursesData 
+        : coursesData.filter(course => course.level === filter);
+
+    filteredCourses.forEach((course, index) => {
+        const courseCard = document.createElement('div');
+        courseCard.className = 'course-card';
+        courseCard.setAttribute('data-level', course.level);
+        courseCard.innerHTML = `
+            <div class="course-header">
+                <div class="course-icon">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <rect x="6" y="8" width="36" height="28" stroke="currentColor" stroke-width="2" rx="2"/>
+                        <circle cx="24" cy="34" r="2" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span class="course-badge">${course.badge}</span>
+            </div>
+            <h3>${course.title}</h3>
+            <p>${course.description}</p>
+            <div class="course-meta">
+                <span>📚 ${course.weeks} hafta</span>
+                <span>👥 ${getLevelName(course.level)}</span>
+            </div>
+            <div class="course-footer">
+                <button class="course-button" onclick="showCourseDetail(${course.id})">Batafsil</button>
+                <span class="course-price">${course.price}</span>
+            </div>
+        `;
+        coursesGrid.appendChild(courseCard);
+    });
+}
+
+function getLevelName(level) {
+    const levels = {
+        'beginner': 'Boshlang\'ich',
+        'intermediate': 'O\'rta',
+        'advanced': 'Murakkab'
+    };
+    return levels[level];
+}
+
+// Filter Functionality
+filterButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const filter = this.getAttribute('data-filter');
+        renderCourses(filter);
     });
 });
 
-// ============================================
-// 3. CTA BUTTON ANIMATION
-// ============================================
-
-if (ctaButton) {
-    ctaButton.addEventListener('click', () => {
-        // Bounce animation
-        ctaButton.style.animation = 'none';
-        setTimeout(() => {
-            ctaButton.style.animation = 'fadeInUp 0.8s ease-out 0.5s both, glow 2s ease-in-out 0.5s infinite';
-        }, 10);
-        
-        showNotification('Kurslarni ko\'rishga tayyormis!');
-        
-        // Scroll to courses section
-        const coursesSection = document.getElementById('courses');
-        if (coursesSection) {
-            setTimeout(() => {
-                coursesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
-        }
-    });
+// Course Detail
+function showCourseDetail(id) {
+    alert(`${coursesData[id - 1].title} kursiga yozilish uchun contact shaklini to'ldiring!`);
 }
 
-// ============================================
-// 4. FORM SUBMISSION
-// ============================================
-
-if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const inputs = contactForm.querySelectorAll('input, textarea');
-        let allFilled = true;
-        
-        inputs.forEach(input => {
-            if (!input.value.trim()) {
-                allFilled = false;
-                input.style.borderColor = '#ff6b6b';
-                input.style.animation = 'shake 0.5s';
-            }
-        });
-        
-        if (allFilled) {
-            // Success animation
-            const submitBtn = contactForm.querySelector('.submit-btn');
-            submitBtn.textContent = '✓ Jo\'natildi!';
-            submitBtn.style.background = '#4caf50';
-            
-            // Clear form
-            setTimeout(() => {
-                contactForm.reset();
-                submitBtn.textContent = 'Jo\'natish';
-                submitBtn.style.background = '';
-            }, 2000);
-            
-            showNotification('Xabaringiz muvaffaqiyatli jo\'natildi!');
-        }
-    });
-    
-    // Remove error styles on input
-    contactForm.querySelectorAll('input, textarea').forEach(input => {
-        input.addEventListener('focus', () => {
-            input.style.borderColor = '';
-            input.style.animation = '';
-        });
-    });
-}
-
-// ============================================
-// 5. NOTIFICATION SYSTEM
-// ============================================
-
-function showNotification(message) {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: linear-gradient(135deg, #0066cc, #0052a3);
-        color: white;
-        padding: 1.2rem 1.8rem;
-        border-radius: 50px;
-        font-weight: 500;
-        z-index: 9999;
-        box-shadow: 0 10px 40px rgba(0, 102, 204, 0.4);
-        animation: slideInRight 0.5s ease-out;
-        max-width: 300px;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        notification.style.animation = 'fadeOut 0.5s ease-out forwards';
-        setTimeout(() => {
-            notification.remove();
-        }, 500);
-    }, 3000);
-}
-
-// ============================================
-// 6. RIPPLE EFFECT
-// ============================================
-
-function createRipple(event) {
-    const button = event.target.closest('button') || event.target.closest('.course-card');
-    if (!button) return;
-    
-    const ripple = document.createElement('span');
-    const rect = button.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
-    
-    ripple.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.5);
-        top: ${y}px;
-        left: ${x}px;
-        animation: rippleAnimation 0.6s ease-out;
-        pointer-events: none;
-    `;
-    
-    button.style.position = 'relative';
-    button.style.overflow = 'hidden';
-    button.appendChild(ripple);
-    
-    setTimeout(() => ripple.remove(), 600);
-}
-
-// Add ripple animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes rippleAnimation {
-        to {
-            transform: scale(4);
-            opacity: 0;
-        }
-    }
-    
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-    
-    @keyframes fadeOut {
-        to {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// ============================================
-// 7. LAZY LOAD ANIMATIONS
-// ============================================
-
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('fade-on-scroll');
-            entry.target.style.opacity = '1';
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Observe all cards and items
-document.querySelectorAll('.course-card, .feature-item, .stat-item').forEach(el => {
-    el.style.opacity = '0';
-    observer.observe(el);
+// CTA Button
+ctaButton.addEventListener('click', function() {
+    document.getElementById('courses').scrollIntoView({ behavior: 'smooth' });
 });
 
-// ============================================
-// 8. PARALLAX EFFECT
-// ============================================
-
-window.addEventListener('mousemove', (e) => {
-    const floatingBoxes = document.querySelectorAll('.floating-box');
-    
-    floatingBoxes.forEach(box => {
-        const speed = 5;
-        const x = (window.innerWidth - e.clientX * speed) / 100;
-        const y = (window.innerHeight - e.clientY * speed) / 100;
-        
-        box.style.transform = `translateX(${x}px) translateY(${y}px)`;
-    });
+// Contact Form
+contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Rahmat! Sizning so\'rovingiz qabul qilindi. Tez orada biz siz bilan bog\'lanamiz! 🚀');
+    contactForm.reset();
 });
 
-// ============================================
-// 9. COUNTER ANIMATION
-// ============================================
-
-function animateCounters() {
-    const stats = document.querySelectorAll('.stat-item h4');
-    
-    stats.forEach(stat => {
-        const finalValue = parseInt(stat.textContent);
-        const isPercentage = stat.textContent.includes('%');
-        const suffix = isPercentage ? '%' : '';
-        let currentValue = 0;
-        
-        const increment = finalValue / 30;
-        const interval = setInterval(() => {
-            currentValue += increment;
-            
-            if (currentValue >= finalValue) {
-                stat.textContent = finalValue + suffix;
-                clearInterval(interval);
-            } else {
-                stat.textContent = Math.floor(currentValue) + suffix;
-            }
-        }, 50);
-    });
+// Setup Event Listeners
+function setupEventListeners() {
+    // Scroll animations
+    observeElements();
 }
 
-// Run counter animation when section is visible
-const aboutSection = document.querySelector('.about');
-if (aboutSection) {
-    const aboutObserver = new IntersectionObserver((entries) => {
+// Intersection Observer for animations
+function observeElements() {
+    const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                animateCounters();
-                aboutObserver.unobserve(entry.target);
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
         });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.course-card, .feature-item, .testimonial-card').forEach(el => {
+        observer.observe(el);
     });
-    aboutObserver.observe(aboutSection);
 }
 
-// ============================================
-// 10. KEYBOARD NAVIGATION
-// ============================================
+// Canvas Animation
+function createCanvasAnimation() {
+    const canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
 
-document.addEventListener('keydown', (e) => {
-    // ESC key - close any open modals
-    if (e.key === 'Escape') {
-        const notifications = document.querySelectorAll('.notification');
-        notifications.forEach(notif => notif.remove());
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 1;
+            this.speedX = (Math.random() - 0.5) * 0.5;
+            this.speedY = (Math.random() - 0.5) * 0.5;
+            this.opacity = Math.random() * 0.5 + 0.2;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            if (this.x > canvas.width) this.x = 0;
+            if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            if (this.y < 0) this.y = canvas.height;
+        }
+
+        draw() {
+            ctx.fillStyle = `rgba(0, 180, 255, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
     }
-    
-    // Arrow keys - navigate between course cards
-    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+
+    // Initialize particles
+    for (let i = 0; i < 50; i++) {
+        particles.push(new Particle());
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Resize canvas on window resize
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
+
+// Smooth Scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
         e.preventDefault();
-        const currentCard = document.activeElement;
-        if (currentCard.classList.contains('course-card')) {
-            const allCards = Array.from(courseCards);
-            const currentIndex = allCards.indexOf(currentCard);
-            
-            if (e.key === 'ArrowRight') {
-                const nextCard = allCards[currentIndex + 1] || allCards[0];
-                nextCard.focus();
-            } else {
-                const prevCard = allCards[currentIndex - 1] || allCards[allCards.length - 1];
-                prevCard.focus();
-            }
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
         }
-    }
-});
-
-// ============================================
-// 11. DARK MODE TOGGLE (Optional)
-// ============================================
-
-function setupDarkMode() {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (prefersDark) {
-        document.documentElement.style.setProperty('--secondary', '#0d0d0d');
-        document.documentElement.style.setProperty('--primary', '#ffffff');
-        document.documentElement.style.setProperty('--light-gray', '#1a1a1a');
-    }
-}
-
-// ============================================
-// 12. PERFORMANCE MONITORING
-// ============================================
-
-window.addEventListener('load', () => {
-    // Log performance metrics
-    if (window.performance && window.performance.timing) {
-        const perfData = window.performance.timing;
-        const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
-        console.log('Sahifa yuklandi: ' + pageLoadTime + 'ms');
-    }
-});
-
-// ============================================
-// 13. MOBILE MENU OPTIMIZATION
-// ============================================
-
-function optimizeMobile() {
-    if (window.innerWidth <= 768) {
-        courseCards.forEach(card => {
-            card.addEventListener('click', function() {
-                // Add active state for mobile
-                courseCards.forEach(c => c.style.outline = '');
-                this.style.outline = '3px solid #0066cc';
-            });
-        });
-    }
-}
-
-window.addEventListener('resize', optimizeMobile);
-optimizeMobile();
-
-// ============================================
-// 14. INITIALIZATION
-// ============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('✓ Skills School saytiga xush kelibsiz!');
-    setupDarkMode();
-    
-    // Smooth scroll for nav links
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            const href = link.getAttribute('href');
-            if (href.startsWith('#')) {
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        });
     });
 });
 
-// ============================================
-// 15. ACCESSIBILITY IMPROVEMENTS
-// ============================================
-
-// Improve focus states
+// Dynamic 3D Tilt Effect
+const courseCards = document.querySelectorAll('.course-card');
 courseCards.forEach(card => {
-    card.setAttribute('tabindex', '0');
-    card.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            card.click();
-        }
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
     });
 });
 
-// Add ARIA labels
-courseCards.forEach((card, index) => {
-    const title = card.querySelector('h3').textContent;
-    card.setAttribute('aria-label', `${index + 1}-kurs: ${title}`);
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+        navbar.style.boxShadow = '0 10px 40px rgba(0, 180, 255, 0.2)';
+    } else {
+        navbar.style.boxShadow = '0 10px 40px rgba(0, 180, 255, 0.15)';
+    }
 });
 
-// ============================================
-// 16. TOUCH OPTIMIZATION
-// ============================================
+// Add loading animation
+window.addEventListener('load', () => {
+    document.body.style.opacity = '1';
+});
 
-let touchStartX = 0;
-let touchEndX = 0;
-
-document.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-}, false);
-
-document.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-}, false);
-
-function handleSwipe() {
-    if (touchEndX < touchStartX - 50) {
-        // Swiped left - go to next section
-        window.scrollBy({ left: 300, behavior: 'smooth' });
-    }
-    if (touchEndX > touchStartX + 50) {
-        // Swiped right - go to previous section
-        window.scrollBy({ left: -300, behavior: 'smooth' });
-    }
-}
-
-// ============================================
-// Export functions for external use
-// ============================================
-
-window.SkillsSchool = {
-    showNotification: showNotification,
-    animateCounters: animateCounters,
-    scrollToCourses: () => {
-        document.getElementById('courses').scrollIntoView({ behavior: 'smooth' });
-    }
-};
-
-console.log('✓ Barcha funksiyalar faol!');
+console.log('✨ Skills School - Professional IT Ta\'limi Platform Yuklandi!');
