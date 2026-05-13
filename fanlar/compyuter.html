@@ -1,1 +1,222 @@
-
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Science | Skills School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        /* Navigatsiya */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* Asosiy kontent */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 120px 30px 60px;
+        }
+        
+        .course-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .course-icon {
+            font-size: 80px;
+            color: #00ffff;
+            margin-bottom: 20px;
+        }
+        
+        .course-title {
+            font-size: 48px;
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .course-description {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .course-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ffff;
+        }
+        
+        .info-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .info-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .info-card li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-card li i {
+            color: #ff00ff;
+            width: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; }
+            .logo-text { font-size: 18px; }
+            .logo-icon { width: 35px; height: 35px; }
+            .course-title { font-size: 28px; }
+            .course-icon { font-size: 50px; }
+            .container { padding: 100px 20px 40px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-code"></i></div>
+            <div class="logo-text">Skills<span style="background: linear-gradient(135deg, #ff00ff, #ffff00); -webkit-background-clip: text;">School</span></div>
+        </div>
+        <a href="../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Bosh sahifa</a>
+    </nav>
+    
+    <div class="container">
+        <div class="course-header">
+            <div class="course-icon"><i class="fas fa-laptop-code"></i></div>
+            <h1 class="course-title">Computer Science</h1>
+            <p class="course-description">Kompyuter fanining asosiy tushunchalari, nazariyalari va zamonaviy texnologiyalar</p>
+        </div>
+        
+        <div class="course-details">
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle"></i> Kurs haqida</h3>
+                <ul>
+                    <li><i class="fas fa-clock"></i> Davomiyligi: 14 hafta</li>
+                    <li><i class="fas fa-chart-line"></i> Daraja: Boshlang'ich</li>
+                    <li><i class="fas fa-certificate"></i> Sertifikat: Ha</li>
+                    <li><i class="fas fa-users"></i> Guruh: 8-12 kishi</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3><i class="fas fa-book-open"></i> O'quv rejasi</h3>
+                <ul>
+                    <li><i class="fas fa-microchip"></i> Kompyuter arxitekturasi</li>
+                    <li><i class="fas fa-code"></i> Dasturlash asoslari</li>
+                    <li><i class="fas fa-project-diagram"></i> Algoritmlar</li>
+                    <li><i class="fas fa-database"></i> Ma'lumotlar tuzilmasi</li>
+                    <li><i class="fas fa-globe"></i> Tarmoqlar asoslari</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3><i class="fas fa-graduation-cap"></i> Kimlar uchun?</h3>
+                <ul>
+                    <li><i class="fas fa-user-graduate"></i> IT ga yangi qadam qo'yganlar</li>
+                    <li><i class="fas fa-school"></i> Maktab o'quvchilari</li>
+                    <li><i class="fas fa-sync-alt"></i> Kasb o'zgartirmoqchi bo'lganlar</li>
+                    <li><i class="fas fa-heart"></i> Texnologiyaga qiziquvchilar</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
