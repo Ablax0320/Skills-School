@@ -66,53 +66,56 @@
             padding: 30px 50px;
         }
 
-        /* LOGOTIP */
-        .logo {
-            position: fixed;
-            top: 30px;
-            left: 40px;
-            z-index: 30;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(15px);
-            padding: 12px 28px;
-            border-radius: 60px;
-            border: 1px solid rgba(0, 255, 255, 0.5);
-            animation: float 3s ease-in-out infinite;
-        }
+      /* ========== LOGOTIP (aylana shaklida + katta) ========== */
+.logo {
+    position: fixed;
+    top: 30px;
+    left: 40px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(15px);
+    padding: 12px 35px 12px 15px;
+    border-radius: 80px;
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    animation: float 3s ease-in-out infinite;
+}
 
-        .logo-icon {
-            width: 90px;
-            height: 90px;
-            border-radius: 20px;
-            overflow: hidden;
-            background: linear-gradient(135deg, #00ffff, #ff00ff);
-            padding: 4px;
-        }
+.logo-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;  /* AYLANA! to'rtburchak emas */
+    overflow: hidden;
+    background: linear-gradient(135deg, #00ffff, #ff00ff);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        #logo-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-        }
+#logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;  /* AYLANA! */
+}
 
-        .logo-text {
-            font-family: 'Orbitron', monospace;
-            font-size: 34px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff, #00ffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.logo-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, #00ffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-        .logo-text span {
-            background: linear-gradient(135deg, #ff00ff, #ffff00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.logo-text span {
+    background: linear-gradient(135deg, #ff00ff, #ffff00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
         /* MARKAZIY TITLE */
         .center-title {
@@ -182,57 +185,60 @@
             box-shadow: 0 0 30px rgba(255, 0, 255, 0.6);
         }
 
-        /* OWNER SECTION */
-        .owner-section {
-            position: fixed;
-            bottom: 30px;
-            right: 40px;
-            z-index: 30;
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(15px);
-            padding: 12px 30px 12px 12px;
-            border-radius: 70px;
-            border: 1px solid rgba(0, 255, 255, 0.5);
-        }
+  /* ========== SIZNING RASMINGIZ (kattaroq) ========== */
+.owner-section {
+    position: fixed;
+    bottom: 40px;
+    right: 50px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(15px);
+    padding: 15px 35px 15px 15px;
+    border-radius: 120px;
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    animation: slideInRight 1s ease;
+}
 
-        .owner-image {
-            width: 92px;
-            height: 92px;
-            border-radius: 70%;
-            background: linear-gradient(135deg, #00ffff, #ff00ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulseRing 2s ease-in-out infinite;
-            overflow: hidden;
-            padding: 3px;
-        }
+.owner-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00ffff, #ff00ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulseRing 2s ease-in-out infinite;
+    overflow: hidden;
+    padding: 5px;
+}
 
-        #owner-img {
-            width: 64px;
-            height: 64px;
-            border-radius: 70%;
-            object-fit: cover;
-            border: 2px solid #fff;
-        }
+#owner-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+}
 
-        .owner-info {
-            text-align: right;
-        }
+.owner-info {
+    text-align: right;
+}
 
-        .owner-name {
-            font-size: 22px;
-            color: #00ffff;
-            font-weight: 700;
-        }
+.owner-name {
+    font-size: 24px;
+    color: #00ffff;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
 
-        .owner-title {
-            font-size: 15px;
-            opacity: 0.85;
-        }
+.owner-title {
+    font-size: 16px;
+    opacity: 0.9;
+    letter-spacing: 1px;
+}
 
         /* SCROLL INDICATOR */
         .scroll-indicator {
