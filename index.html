@@ -6,10 +6,13 @@
     <title>Skills School | IT Mutaxassislik Markazi</title>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <!-- CSS fayl -->
     <link rel="stylesheet" href="dizayn.css">
@@ -19,42 +22,176 @@
     <!-- 3D Canvas Container -->
     <div id="canvas-container"></div>
 
-    <!-- Asosiy kontent -->
-    <div class="content">
-        <!-- LOGOTIP (chap yuqori) -->
-        <div class="logo">
-            <div class="logo-icon">
-                <img src="Screenshot From 2026-05-13 23-48-25.png" alt="Skills School Logo" id="logo-img">
+    <!-- ASOSIY 1-SAHIFA -->
+    <section class="hero-section">
+        <div class="content">
+            <!-- LOGOTIP (chap yuqori) -->
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="Screenshot From 2026-05-13 23-48-25.png" alt="Skills School Logo" id="logo-img">
+                </div>
+                <div class="logo-text">Skills<span>School</span></div>
             </div>
-            <div class="logo-text">Skills<span>School</span></div>
-        </div>
 
-        <!-- MARKAZIY TITLE -->
-        <div class="center-title">
-            <h1 class="main-title">SKILLS SCHOOL</h1>
-            <p class="subtitle">IT MUTAXASSISLIK MARKAZI</p>
-            <div class="typing-text">
-                <span id="typed-text"></span><span class="cursor">|</span>
+            <!-- MARKAZIY TITLE -->
+            <div class="center-title">
+                <h1 class="main-title">SKILLS SCHOOL</h1>
+                <p class="subtitle">IT MUTAXASSISLIK MARKAZI</p>
+                <div class="typing-text">
+                    <span id="typed-text"></span><span class="cursor">|</span>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="scrollToCourses()">Kurslarni ko'rish <i class="fas fa-arrow-right"></i></button>
+                </div>
             </div>
-        </div>
 
-        <!-- SIZNING RASMINGIZ (o'ng pastki) -->
-        <div class="owner-section">
-            <div class="owner-image">
-                <img src="Screenshot From 2026-05-13 23-50-26.png" alt="Musulmonov Mamarajab" id="owner-img">
+            <!-- SIZNING RASMINGIZ (o'ng pastki) -->
+            <div class="owner-section">
+                <div class="owner-image">
+                    <img src="Screenshot From 2026-05-13 23-50-26.png" alt="Musulmonov Mamarajab" id="owner-img">
+                </div>
+                <div class="owner-info">
+                    <div class="owner-name">Musulmonov Mamarajab</div>
+                    <div class="owner-title">Founder & CEO</div>
+                </div>
             </div>
-            <div class="owner-info">
-                <div class="owner-name">Musulmonov Mamarajab</div>
-                <div class="owner-title">Founder & CEO</div>
-            </div>
-        </div>
 
-        <!-- Scroll indikatori -->
-        <div class="scroll-indicator" onclick="scrollToNext()">
-            <span>scroll</span>
-            <i class="fas fa-chevron-down"></i>
+            <!-- Scroll indikatori -->
+            <div class="scroll-indicator" onclick="scrollToCourses()">
+                <span>scroll down</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- 2-SAHIFA: MUTAXASSISLIK FANLARI -->
+    <section id="courses-section" class="courses-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Bizning <span class="gradient-text">Mutaxassisliklar</span></h2>
+                <p>Zamonaviy IT sohasining 9 ta muhim yo'nalishi</p>
+            </div>
+            <div class="courses-grid">
+                <!-- 1 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="100">
+                    <div class="card-icon"><i class="fas fa-laptop-code"></i></div>
+                    <h3>Computer Science</h3>
+                    <p>Kompyuter fanining asosiy tushunchalari, nazariyalari va zamonaviy texnologiyalar</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 14 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> Boshlang'ich</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <!-- 2 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="150">
+                    <div class="card-icon"><i class="fab fa-windows"></i></div>
+                    <h3>Windows OS</h3>
+                    <p>Windows operatsion tizimini chuqur o'rganish, administratsiya va sozlash</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 8 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> Boshlang'ich</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <!-- 3 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="200">
+                    <div class="card-icon"><i class="fas fa-code-branch"></i></div>
+                    <h3>Algoritmlar va Dasturlash Asoslari</h3>
+                    <p>Mustahkam algoritm tuzish, problem-solving va mantiqiy fikrlash</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 16 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> O'rta</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <!-- 4 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="250">
+                    <div class="card-icon"><i class="fas fa-code"></i></div>
+                    <h3>Dasturlash Asoslari (C++, Python)</h3>
+                    <p>C++ va Python dasturlash tillarida yuqori samarali dasturlar yozish</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 20 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> O'rta</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <!-- 5 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="300">
+                    <div class="card-icon"><i class="fas fa-globe"></i></div>
+                    <h3>Web Dasturlash</h3>
+                    <p>HTML, CSS, JavaScript, React bilan zamonaviy veb-saytlar yaratish</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 18 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> O'rta</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <!-- 6 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="350">
+                    <div class="card-icon"><i class="fas fa-database"></i></div>
+                    <h3>Ma'lumotlar Bazasi</h3>
+                    <p>SQL, MySQL, PostgreSQL va relational databases bilan ishlash</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 12 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> O'rta</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <!-- 7 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="400">
+                    <div class="card-icon"><i class="fas fa-project-diagram"></i></div>
+                    <h3>Ma'lumotlar Tuzilmasi va Algoritmlar</h3>
+                    <p>Array, Stack, Queue, Tree, Graph va murakkab algoritmlar</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 16 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> Murakkab</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <!-- 8 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="450">
+                    <div class="card-icon"><i class="fab fa-linux"></i></div>
+                    <h3>Linux va Ubuntu</h3>
+                    <p>Linux tizimlari, Ubuntu, terminal komandalari va tizim boshqaruvi</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 14 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> O'rta</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <!-- 9 -->
+                <div class="course-card" data-aos="flip-left" data-aos-delay="500">
+                    <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Sistem Administrator</h3>
+                    <p>Tizim administratsiyasi, serverlar, tarmoq xavfsizligi va monitoring</p>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> 20 hafta</span>
+                        <span><i class="fas fa-chart-line"></i> Murakkab</span>
+                    </div>
+                    <div class="course-hover">
+                        <span>Batafsil <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Three.js -->
     <script type="importmap">
@@ -65,11 +202,17 @@
         }
     </script>
 
-    <!-- JavaScript fayl -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script type="module" src="javas.js"></script>
     
-    <!-- Qo'shimcha vanilla JS -->
     <script>
+        // AOS init
+        AOS.init({
+            duration: 1000,
+            once: false,
+            mirror: true
+        });
+        
         // Typing effekti
         const words = [
             "Cybersecurity",
@@ -77,7 +220,8 @@
             "Data Science",
             "Web Development",
             "Python Programming",
-            "AI & Machine Learning"
+            "AI & Machine Learning",
+            "System Administration"
         ];
         
         let wordIndex = 0;
@@ -116,12 +260,13 @@
         typeEffect();
         
         // Scroll funksiyasi
-        function scrollToNext() {
-            window.scrollTo({
-                top: window.innerHeight,
+        function scrollToCourses() {
+            document.getElementById('courses-section').scrollIntoView({
                 behavior: 'smooth'
             });
         }
+        
+        window.scrollToCourses = scrollToCourses;
     </script>
 </body>
 </html>
