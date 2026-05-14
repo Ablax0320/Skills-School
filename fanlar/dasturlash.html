@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>C++ va Python Dasturlash | Skills School - 3D Code Editor</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background: #0a0a14;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* 3D CANVAS */
+        #canvas-3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: block;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 20, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 136, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff8800, #ff5500);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            color: #0a0a14;
+        }
+
+        .logo-text {
+            font-family: 'Fira Code', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: #ff8800;
+        }
+
+        .logo-text span {
+            color: #00ff88;
+        }
+
+        .back-btn {
+            background: rgba(255, 136, 0, 0.2);
+            border: 1px solid #ff8800;
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: #ff8800;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .back-btn:hover {
+            background: #ff8800;
+            color: #0a0a14;
+            box-shadow: 0 0 15px rgba(255, 136, 0, 0.5);
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 90px 30px 60px;
+        }
+
+        /* Header */
+        .course-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .course-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 136, 0, 0.1);
+            border: 1px solid rgba(255, 136, 0, 0.3);
+            padding: 6px 18px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #ff8800;
+            margin-bottom: 20px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .course-title {
+            font-size: 52px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .course-title .cpp { color: #00599c; text-shadow: 0 0 10px #00599c; }
+        .course-title .python { color: #ffd43b; text-shadow: 0 0 10px #ffd43b; }
+        .course-title .and { color: #e0e0e0; }
+
+        .course-subtitle {
+            font-size: 14px;
+            color: #8a8a9a;
+            margin-top: 15px;
+        }
+
+        .course-stats {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 6px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 136, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff8800;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-family: 'Fira Code', monospace;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ff8800;
+        }
+
+        .section-title i {
+            color: #ff8800;
+            font-size: 20px;
+        }
+
+        /* Cards */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .topic-card {
+            background: rgba(30, 30, 46, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 136, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .topic-card:hover {
+            border-color: #ff8800;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 136, 0, 0.1);
+        }
+
+        .topic-number {
+            font-size: 11px;
+            color: #ff8800;
+            font-family: 'Fira Code', monospace;
+            margin-bottom: 10px;
+        }
+
+        .topic-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .topic-card h3 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .topic-card p {
+            font-size: 12px;
+            color: #8a8a9a;
+            line-height: 1.5;
+        }
+
+        .topic-tag {
+            display: inline-block;
+            background: rgba(255, 136, 0, 0.15);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 9px;
+            color: #ff8800;
+            margin-top: 10px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 20, 0.98);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            max-width: 650px;
+            width: 90%;
+            background: #1a1a2a;
+            border-radius: 16px;
+            padding: 0;
+            border: 1px solid #ff8800;
+            animation: modalFade 0.3s ease;
+            overflow: hidden;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: #252536;
+            border-bottom: 1px solid #3a3a4a;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            color: #ff8800;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #8a8a9a;
+            font-size: 22px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #ff8800;
+        }
+
+        .modal-body {
+            padding: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #c0c0d0;
+        }
+
+        .code-block {
+            background: #0a0a14;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            margin: 15px 0;
+            border-left: 3px solid #ff8800;
+            overflow-x: auto;
+        }
+
+        .fact-box {
+            background: rgba(255, 136, 0, 0.1);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 3px solid #ff8800;
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 10px 20px; }
+            .logo-icon { width: 32px; height: 32px; font-size: 16px; }
+            .logo-text { font-size: 14px; }
+            .back-btn { padding: 5px 12px; font-size: 10px; }
+            .course-title { font-size: 28px; }
+            .section-title { font-size: 16px; }
+            .topics-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 3D CANVAS -->
+    <canvas id="canvas-3d"></canvas>
+
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">&lt;/&gt;</div>
+            <div class="logo-text">Skills<span>School</span></div>
+        </div>
+        <a href="../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> cd ..</a>
+    </nav>
+
+    <div class="container">
+        <div class="course-header">
+            <div class="course-badge"><i class="fas fa-terminal"></i> main.exe --language 3D</div>
+            <h1 class="course-title">
+                <span class="cpp">C++</span> <span class="and">&</span> <span class="python">Python</span>
+            </h1>
+            <p class="course-subtitle">#include &#60;iostream&#62; | print("Hello, 3D World!")</p>
+            <div class="course-stats">
+                <div class="stat-item"><div class="stat-number">20</div><div class="stat-label">Haftalar</div></div>
+                <div class="stat-item"><div class="stat-number">18</div><div class="stat-label">Mavzular</div></div>
+                <div class="stat-item"><div class="stat-number">200+</div><div class="stat-label">Kod misollar</div></div>
+            </div>
+        </div>
+
+        <!-- 1-BO'LIM: C++ Asoslari -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fab fa-cuttlefish"></i>
+                <span>C++ Dasturlash Asoslari</span>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showTopic('cpp1', 'C++ ga kirish', 'C++ - yuqori samarali dasturlash tili. Bjarne Stroustrup tomonidan 1985-yilda yaratilgan.', 'cpp')">
+                    <div class="topic-number">01</div>
+                    <div class="topic-icon"><i class="fab fa-cuttlefish"></i></div>
+                    <h3>C++ ga kirish</h3>
+                    <p>Til tarixi, asosiy tushunchalar</p>
+                    <span class="topic-tag">#include</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('cpp2', 'O\'zgaruvchilar va turlar', 'int, float, double, char, bool, string, auto, const', 'cpp')">
+                    <div class="topic-number">02</div>
+                    <div class="topic-icon"><i class="fas fa-database"></i></div>
+                    <h3>O'zgaruvchilar va turlar</h3>
+                    <p>Asosiy ma'lumot turlari</p>
+                    <span class="topic-tag">Variables</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('cpp3', 'Kiritish/Chiqarish', 'cout &lt;&lt; , cin >> , endl, manipulatorlar', 'cpp')">
+                    <div class="topic-number">03</div>
+                    <div class="topic-icon"><i class="fas fa-keyboard"></i></div>
+                    <h3>Kiritish/Chiqarish</h3>
+                    <p>cin, cout, endl</p>
+                    <span class="topic-tag">I/O</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('cpp4', 'Shart operatorlari', 'if, else if, else, switch, ternary operator', 'cpp')">
+                    <div class="topic-number">04</div>
+                    <div class="topic-icon"><i class="fas fa-code-branch"></i></div>
+                    <h3>Shart operatorlari</h3>
+                    <p>if, else, switch</p>
+                    <span class="topic-tag">Conditions</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('cpp5', 'Sikllar', 'for, while, do-while, range-based for', 'cpp')">
+                    <div class="topic-number">05</div>
+                    <div class="topic-icon"><i class="fas fa-redo-alt"></i></div>
+                    <h3>Sikllar</h3>
+                    <p>for, while, do-while</p>
+                    <span class="topic-tag">Loops</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('cpp6', 'Funksiyalar', 'Funsiya yaratish, parametrlar, overload', 'cpp')">
+                    <div class="topic-number">06</div>
+                    <div class="topic-icon"><i class="fas fa-cog"></i></div>
+                    <h3>Funksiyalar</h3>
+                    <p>Parametrlar, qaytarish</p>
+                    <span class="topic-tag">Functions</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2-BO'LIM: Python Asoslari -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fab fa-python"></i>
+                <span>Python Dasturlash Asoslari</span>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showTopic('py1', 'Python ga kirish', 'Python - sodda va kuchli til. AI, Data Science da ishlatiladi.', 'python')">
+                    <div class="topic-number">07</div>
+                    <div class="topic-icon"><i class="fab fa-python"></i></div>
+                    <h3>Python ga kirish</h3>
+                    <p>Til tarixi, afzalliklari</p>
+                    <span class="topic-tag">print()</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('py2', 'O\'zgaruvchilar va turlar', 'int, float, str, bool, list, tuple, dict, set', 'python')">
+                    <div class="topic-number">08</div>
+                    <div class="topic-icon"><i class="fas fa-database"></i></div>
+                    <h3>O'zgaruvchilar va turlar</h3>
+                    <p>Dinamik tipli o'zgaruvchilar</p>
+                    <span class="topic-tag">Data Types</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('py3', 'Kiritish/Chiqarish', 'print(), input(), f-string, format()', 'python')">
+                    <div class="topic-number">09</div>
+                    <div class="topic-icon"><i class="fas fa-keyboard"></i></div>
+                    <h3>Kiritish/Chiqarish</h3>
+                    <p>print(), input(), f-string</p>
+                    <span class="topic-tag">I/O</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('py4', 'Shart operatorlari', 'if, elif, else, and, or, not', 'python')">
+                    <div class="topic-number">10</div>
+                    <div class="topic-icon"><i class="fas fa-code-branch"></i></div>
+                    <h3>Shart operatorlari</h3>
+                    <p>if, elif, else</p>
+                    <span class="topic-tag">Conditions</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('py5', 'Sikllar', 'for, while, range(), break, continue', 'python')">
+                    <div class="topic-number">11</div>
+                    <div class="topic-icon"><i class="fas fa-redo-alt"></i></div>
+                    <h3>Sikllar</h3>
+                    <p>for, while, range()</p>
+                    <span class="topic-tag">Loops</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('py6', 'Funksiyalar', 'def, return, argumentlar, lambda', 'python')">
+                    <div class="topic-number">12</div>
+                    <div class="topic-icon"><i class="fas fa-cog"></i></div>
+                    <h3>Funksiyalar</h3>
+                    <p>def, return, lambda</p>
+                    <span class="topic-tag">Functions</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="topicModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Three.js 3D Animatsiya -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        const canvas = document.getElementById('canvas-3d');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a14);
+        scene.fog = new THREE.FogExp2(0x0a0a14, 0.005);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 12);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+
+        // ========== YORUG'LIK ==========
+        const ambientLight = new THREE.AmbientLight(0x2a2a3a);
+        scene.add(ambientLight);
+        
+        const mainLight = new THREE.DirectionalLight(0xffaa66, 1);
+        mainLight.position.set(2, 5, 3);
+        mainLight.castShadow = true;
+        scene.add(mainLight);
+        
+        const backLight = new THREE.PointLight(0xff44aa, 0.4);
+        backLight.position.set(-2, 1, -3);
+        scene.add(backLight);
+        
+        const fillLight = new THREE.PointLight(0x44ffaa, 0.3);
+        fillLight.position.set(1, 2, 2);
+        scene.add(fillLight);
+        
+        const colorLight1 = new THREE.PointLight(0xff8800, 0.5);
+        colorLight1.position.set(2, 1, 3);
+        scene.add(colorLight1);
+        
+        const colorLight2 = new THREE.PointLight(0x00aaff, 0.5);
+        colorLight2.position.set(-2, 1.5, 3);
+        scene.add(colorLight2);
+
+        // ========== C++ LOGO KUBIK ==========
+        const cppGroup = new THREE.Group();
+        
+        const cppCoreGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+        const cppCoreMat = new THREE.MeshStandardMaterial({ color: 0x00599c, metalness: 0.7, roughness: 0.3, emissive: 0x002244 });
+        const cppCore = new THREE.Mesh(cppCoreGeo, cppCoreMat);
+        cppGroup.add(cppCore);
+        
+        // C++ harflari
+        const cGeo = new THREE.BoxGeometry(0.25, 0.25, 0.1);
+        const cMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const c1 = new THREE.Mesh(cGeo, cMat);
+        c1.position.set(-0.3, 0.2, 0.41);
+        cppGroup.add(c1);
+        
+        const plusGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        const plusMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const plus1 = new THREE.Mesh(plusGeo, plusMat);
+        plus1.position.set(0, 0, 0.41);
+        cppGroup.add(plus1);
+        
+        const plus2 = new THREE.Mesh(plusGeo, plusMat);
+        plus2.position.set(0, 0.15, 0.41);
+        cppGroup.add(plus2);
+        
+        cppGroup.position.set(-2.5, 1.2, 0);
+        scene.add(cppGroup);
+
+        // ========== PYTHON LOGO (ikki ilon) ==========
+        const pythonGroup = new THREE.Group();
+        
+        const pyCoreGeo = new THREE.SphereGeometry(0.5, 32, 32);
+        const pyCoreMat = new THREE.MeshStandardMaterial({ color: 0xffd43b, metalness: 0.3, roughness: 0.4, emissive: 0x442200 });
+        const pyCore = new THREE.Mesh(pyCoreGeo, pyCoreMat);
+        pythonGroup.add(pyCore);
+        
+        // Ilon shaklida chiziqlar
+        const points1 = [];
+        for (let t = 0; t <= 1; t += 0.05) {
+            const angle = t * Math.PI * 2;
+            points1.push(new THREE.Vector3(Math.cos(angle) * 0.6, Math.sin(angle) * 0.6 + 0.1, 0.55));
+        }
+        const lineGeo1 = new THREE.BufferGeometry().setFromPoints(points1);
+        const lineMat1 = new THREE.LineBasicMaterial({ color: 0x306998 });
+        const line1 = new THREE.Line(lineGeo1, lineMat1);
+        pythonGroup.add(line1);
+        
+        const points2 = [];
+        for (let t = 0; t <= 1; t += 0.05) {
+            const angle = t * Math.PI * 2;
+            points2.push(new THREE.Vector3(Math.cos(angle) * 0.6, Math.sin(angle) * 0.6 - 0.1, 0.55));
+        }
+        const lineGeo2 = new THREE.BufferGeometry().setFromPoints(points2);
+        const lineMat2 = new THREE.LineBasicMaterial({ color: 0xffd43b });
+        const line2 = new THREE.Line(lineGeo2, lineMat2);
+        pythonGroup.add(line2);
+        
+        pythonGroup.position.set(2.5, 1.2, 0);
+        scene.add(pythonGroup);
+
+        // ========== AYLANUVCHI KOD KUBIKLARI ==========
+        const codeCubes = [];
+        const cubeColors = [0xff8800, 0x00ff88, 0x0088ff, 0xff44aa, 0x44ffaa];
+        const cubePositions = [
+            { x: -3, y: -1, z: -1 }, { x: 3, y: -1, z: -1 },
+            { x: -2, y: -1.5, z: -2 }, { x: 2, y: -1.5, z: -2 },
+            { x: 0, y: -2, z: -1.5 }, { x: -3.5, y: 0, z: -1.5 }, { x: 3.5, y: 0, z: -1.5 }
+        ];
+        
+        cubePositions.forEach((pos, i) => {
+            const size = 0.4;
+            const geo = new THREE.BoxGeometry(size, size, size);
+            const mat = new THREE.MeshStandardMaterial({ color: cubeColors[i % cubeColors.length], metalness: 0.5, roughness: 0.4 });
+            const cube = new THREE.Mesh(geo, mat);
+            cube.position.set(pos.x, pos.y, pos.z);
+            cube.userData = { speedX: 0.005 + Math.random() * 0.01, speedY: 0.005 + Math.random() * 0.01, speedZ: 0.005 + Math.random() * 0.01 };
+            scene.add(cube);
+            codeCubes.push(cube);
+        });
+
+        // ========== AYLANUVCHI HALQALAR ==========
+        const ring1Geo = new THREE.TorusGeometry(2.2, 0.05, 64, 200);
+        const ring1Mat = new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0xff4400, emissiveIntensity: 0.3 });
+        const ring1 = new THREE.Mesh(ring1Geo, ring1Mat);
+        ring1.rotation.x = Math.PI / 2;
+        scene.add(ring1);
+        
+        const ring2Geo = new THREE.TorusGeometry(2.5, 0.04, 64, 200);
+        const ring2Mat = new THREE.MeshStandardMaterial({ color: 0x00ff88, emissive: 0x00aa44, emissiveIntensity: 0.3 });
+        const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+        ring2.rotation.z = Math.PI / 2;
+        scene.add(ring2);
+        
+        const ring3Geo = new THREE.TorusGeometry(2.8, 0.03, 64, 200);
+        const ring3Mat = new THREE.MeshStandardMaterial({ color: 0x0088ff, emissive: 0x0044aa, emissiveIntensity: 0.3 });
+        const ring3 = new THREE.Mesh(ring3Geo, ring3Mat);
+        ring3.rotation.x = Math.PI / 3;
+        scene.add(ring3);
+
+        // ========== ZARRALAR (kod oqimi) ==========
+        const particleCount = 2000;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePos = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount; i++) {
+            particlePos[i*3] = (Math.random() - 0.5) * 20;
+            particlePos[i*3+1] = (Math.random() - 0.5) * 12;
+            particlePos[i*3+2] = (Math.random() - 0.5) * 15 - 5;
+        }
+        
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0xff8800, size: 0.05, transparent: true, blending: THREE.AdditiveBlending });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        scene.add(particles);
+        
+        // Yashil zarralar
+        const particleGeo2 = new THREE.BufferGeometry();
+        const particlePos2 = new Float32Array(1500 * 3);
+        for (let i = 0; i < 1500; i++) {
+            particlePos2[i*3] = (Math.random() - 0.5) * 18;
+            particlePos2[i*3+1] = (Math.random() - 0.5) * 10;
+            particlePos2[i*3+2] = (Math.random() - 0.5) * 12 - 4;
+        }
+        particleGeo2.setAttribute('position', new THREE.BufferAttribute(particlePos2, 3));
+        const particleMat2 = new THREE.PointsMaterial({ color: 0x00ff88, size: 0.04, transparent: true, blending: THREE.AdditiveBlending });
+        const particles2 = new THREE.Points(particleGeo2, particleMat2);
+        scene.add(particles2);
+
+        // ========== YULDUZLAR ==========
+        const starCount = 1500;
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            starPos[i*3] = (Math.random() - 0.5) * 200;
+            starPos[i*3+1] = (Math.random() - 0.5) * 100;
+            starPos[i*3+2] = (Math.random() - 0.5) * 80 - 30;
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08 });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
+
+        // ========== ANIMATSIYA ==========
+        let time = 0;
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+            
+            // C++ va Python logolarini aylantirish
+            cppGroup.rotation.y += 0.008;
+            cppGroup.rotation.x += 0.005;
+            pythonGroup.rotation.y -= 0.008;
+            pythonGroup.rotation.x += 0.005;
+            
+            // Kod kubiklarini aylantirish
+            codeCubes.forEach(cube => {
+                cube.rotation.x += cube.userData.speedX;
+                cube.rotation.y += cube.userData.speedY;
+                cube.rotation.z += cube.userData.speedZ;
+            });
+            
+            // Halqalarni aylantirish
+            ring1.rotation.z += 0.005;
+            ring2.rotation.x += 0.004;
+            ring3.rotation.y += 0.003;
+            ring3.rotation.z += 0.002;
+            
+            // Zarralar
+            particles.rotation.y += 0.001;
+            particles.rotation.x += 0.0005;
+            particles2.rotation.y -= 0.0008;
+            particles2.rotation.z += 0.0003;
+            stars.rotation.y += 0.0002;
+            
+            // Rangli chiroqlar
+            colorLight1.intensity = 0.5 + Math.sin(time * 2) * 0.2;
+            colorLight2.intensity = 0.5 + Math.cos(time * 1.8) * 0.2;
+            
+            // Kamera sekin harakat
+            camera.position.x += (Math.sin(time * 0.1) * 0.3 - camera.position.x) * 0.02;
+            camera.position.y += (Math.sin(time * 0.15) * 0.2 - camera.position.y) * 0.02;
+            camera.lookAt(0, 0, 0);
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        console.log('🎮 3D Dasturlash animatsiyasi ishga tushdi!');
+    </script>
+
+    <script>
+        const codeExamples = {
+            cpp1: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}',
+            cpp2: 'int age = 18;\nfloat pi = 3.14159;\ndouble e = 2.71828;\nchar grade = "A";\nbool isStudent = true;\nstring name = "Skills";',
+            cpp3: 'int x;\ncout << "Enter number: ";\ncin >> x;\ncout << "You entered: " << x << endl;',
+            cpp4: 'if (score >= 90) {\n    grade = "A";\n} else if (score >= 70) {\n    grade = "B";\n} else {\n    grade = "F";\n}',
+            cpp5: 'for (int i = 0; i < 10; i++) {\n    cout << i << " ";\n}\n\nint j = 0;\nwhile (j < 10) {\n    cout << j++ << " ";\n}',
+            cpp6: 'int add(int a, int b) {\n    return a + b;\n}\n\nint main() {\n    int sum = add(5, 3);\n    cout << sum;\n    return 0;\n}',
+            py1: 'print("Hello, World!")\n\nname = input("What is your name? ")\nprint(f"Hello, {name}!")',
+            py2: 'age = 18\npi = 3.14159\nname = "Skills"\nis_student = True\nmy_list = [1, 2, 3, 4, 5]',
+            py3: 'print("Hello", "World", sep="-", end="!\\n")\n\nname = input("Enter name: ")\nprint(f"Welcome, {name}")',
+            py4: 'if score >= 90:\n    grade = "A"\nelif score >= 70:\n    grade = "B"\nelse:\n    grade = "F"',
+            py5: 'for i in range(10):\n    print(i)\n\nx = 0\nwhile x < 10:\n    print(x)\n    x += 1',
+            py6: 'def add(a, b):\n    return a + b\n\ndef greet(name="World"):\n    print(f"Hello, {name}")\n\nlambda_func = lambda x: x * 2'
+        };
+
+        const facts = [
+            "C++ dasturlash tili 1985-yilda yaratilgan!",
+            "Python 1991-yilda Guido van Rossum tomonidan yaratilgan.",
+            "Python nomi Monty Python guruhidan olingan!",
+            "Google, Facebook, Instagram Python dan foydalanadi.",
+            "C++ o'yinlar va operatsion tizimlar yozishda ishlatiladi.",
+            "Python AI va Data Science da yetakchi til hisoblanadi."
+        ];
+
+        function showTopic(id, title, content, lang) {
+            const code = codeExamples[id] || '// Kod yozing\nprint("Hello!")';
+            
+            document.getElementById('modalTitle').innerHTML = `${title}`;
+            document.getElementById('modalBody').innerHTML = `
+                <p>${content}</p>
+                <div class="code-block">
+                    <i class="fas fa-file-code" style="margin-right: 8px; color: #ff8800;"></i>
+                    <strong>Kod misoli:</strong><br>
+                    <code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>
+                </div>
+                <div class="fact-box">
+                    <i class="fas fa-lightbulb" style="margin-right: 8px; color: #ffd43b;"></i>
+                    <strong>Qiziqarli fakt:</strong> ${facts[Math.floor(Math.random() * facts.length)]}
+                </div>
+            `;
+            document.getElementById('topicModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('topicModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('topicModal')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
