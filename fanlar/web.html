@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Web Dasturlash | Skills School - 3D Browser World</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background: #0a0a2a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* 3D CANVAS */
+        #canvas-3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: block;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 42, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 200, 255, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00c8ff, #0088ff);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            color: #0a0a2a;
+        }
+
+        .logo-text {
+            font-family: 'Fira Code', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: #00c8ff;
+        }
+
+        .logo-text span {
+            color: #ff44aa;
+        }
+
+        .back-btn {
+            background: rgba(0, 200, 255, 0.2);
+            border: 1px solid #00c8ff;
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: #00c8ff;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .back-btn:hover {
+            background: #00c8ff;
+            color: #0a0a2a;
+            box-shadow: 0 0 15px rgba(0, 200, 255, 0.5);
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 90px 30px 60px;
+        }
+
+        /* Header */
+        .course-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .course-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid rgba(0, 200, 255, 0.3);
+            padding: 6px 18px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #00c8ff;
+            margin-bottom: 20px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .course-title {
+            font-size: 52px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .course-title .html { color: #e44d26; text-shadow: 0 0 10px #e44d26; }
+        .course-title .css { color: #264de4; text-shadow: 0 0 10px #264de4; }
+        .course-title .js { color: #f0db4f; text-shadow: 0 0 10px #f0db4f; }
+
+        .course-subtitle {
+            font-size: 14px;
+            color: #8a8a9a;
+            margin-top: 15px;
+        }
+
+        .course-stats {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 6px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 200, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 22px;
+            font-weight: 700;
+            color: #00c8ff;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-family: 'Fira Code', monospace;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 200, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #00c8ff;
+        }
+
+        .section-title i {
+            color: #00c8ff;
+            font-size: 20px;
+        }
+
+        /* Cards */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .topic-card {
+            background: rgba(30, 30, 56, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(0, 200, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .topic-card:hover {
+            border-color: #00c8ff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: rgba(0, 200, 255, 0.1);
+        }
+
+        .topic-number {
+            font-size: 11px;
+            color: #00c8ff;
+            font-family: 'Fira Code', monospace;
+            margin-bottom: 10px;
+        }
+
+        .topic-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .topic-card h3 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .topic-card p {
+            font-size: 12px;
+            color: #8a8a9a;
+            line-height: 1.5;
+        }
+
+        .topic-tag {
+            display: inline-block;
+            background: rgba(0, 200, 255, 0.15);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 9px;
+            color: #00c8ff;
+            margin-top: 10px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 42, 0.98);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            max-width: 650px;
+            width: 90%;
+            background: #1a1a3a;
+            border-radius: 16px;
+            padding: 0;
+            border: 1px solid #00c8ff;
+            animation: modalFade 0.3s ease;
+            overflow: hidden;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: #25254a;
+            border-bottom: 1px solid #3a3a5a;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            color: #00c8ff;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #8a8a9a;
+            font-size: 22px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #00c8ff;
+        }
+
+        .modal-body {
+            padding: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #c0c0d0;
+        }
+
+        .code-block {
+            background: #0a0a2a;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            margin: 15px 0;
+            border-left: 3px solid #00c8ff;
+            overflow-x: auto;
+        }
+
+        .fact-box {
+            background: rgba(0, 200, 255, 0.1);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 3px solid #00c8ff;
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 10px 20px; }
+            .logo-icon { width: 32px; height: 32px; font-size: 16px; }
+            .logo-text { font-size: 14px; }
+            .back-btn { padding: 5px 12px; font-size: 10px; }
+            .course-title { font-size: 28px; }
+            .section-title { font-size: 16px; }
+            .topics-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 3D CANVAS -->
+    <canvas id="canvas-3d"></canvas>
+
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">&lt;/&gt;</div>
+            <div class="logo-text">Skills<span>School</span></div>
+        </div>
+        <a href="../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> cd ..</a>
+    </nav>
+
+    <div class="container">
+        <div class="course-header">
+            <div class="course-badge"><i class="fas fa-globe"></i> www.skillsschool.uz</div>
+            <h1 class="course-title">
+                <span class="html">HTML</span> + 
+                <span class="css">CSS</span> + 
+                <span class="js">JavaScript</span>
+            </h1>
+            <p class="course-subtitle">&lt;!DOCTYPE html&gt; | .container { display: flex; } | console.log("Hello!")</p>
+            <div class="course-stats">
+                <div class="stat-item"><div class="stat-number">18</div><div class="stat-label">Haftalar</div></div>
+                <div class="stat-item"><div class="stat-number">24</div><div class="stat-label">Mavzular</div></div>
+                <div class="stat-item"><div class="stat-number">150+</div><div class="stat-label">Kod misollar</div></div>
+            </div>
+        </div>
+
+        <!-- 1-BO'LIM: HTML Asoslari -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fab fa-html5"></i>
+                <span>HTML - Struktura</span>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showTopic('html1', 'HTML ga kirish', 'HTML (HyperText Markup Language) - veb-sahifalarning asosi. Tim Berners-Lee tomonidan 1991-yilda yaratilgan.', 'html')">
+                    <div class="topic-number">01</div>
+                    <div class="topic-icon"><i class="fab fa-html5" style="color:#e44d26"></i></div>
+                    <h3>HTML ga kirish</h3>
+                    <p>Tarixi, asosiy tushunchalar</p>
+                    <span class="topic-tag">&lt;!DOCTYPE&gt;</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('html2', 'HTML teglari', 'Teglar - HTML hujjatining asosiy qurilish bloklari. &lt;html&gt;, &lt;head&gt;, &lt;body&gt;, &lt;h1&gt;-&lt;h6&gt;, &lt;p&gt;, &lt;div&gt;, &lt;span&gt;', 'html')">
+                    <div class="topic-number">02</div>
+                    <div class="topic-icon"><i class="fas fa-tags" style="color:#e44d26"></i></div>
+                    <h3>HTML teglari</h3>
+                    <p>Asosiy va semantic teglar</p>
+                    <span class="topic-tag">&lt;div&gt;</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('html3', 'Atributlar', 'Teglarga qo\'shimcha ma\'lumot beradi. id, class, src, href, alt, title, style.', 'html')">
+                    <div class="topic-number">03</div>
+                    <div class="topic-icon"><i class="fas fa-code" style="color:#e44d26"></i></div>
+                    <h3>Atributlar</h3>
+                    <p>id, class, src, href va boshqalar</p>
+                    <span class="topic-tag">class="name"</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('html4', 'Formalar va inputlar', 'Foydalanuvchidan ma\'lumot olish. &lt;form&gt;, &lt;input&gt;, &lt;textarea&gt;, &lt;select&gt;, &lt;button&gt;', 'html')">
+                    <div class="topic-number">04</div>
+                    <div class="topic-icon"><i class="fas fa-window-maximize" style="color:#e44d26"></i></div>
+                    <h3>Formalar va inputlar</h3>
+                    <p>input, textarea, select, button</p>
+                    <span class="topic-tag">&lt;input&gt;</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2-BO'LIM: CSS Asoslari -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fab fa-css3-alt"></i>
+                <span>CSS - Dizayn</span>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showTopic('css1', 'CSS ga kirish', 'CSS (Cascading Style Sheets) - veb-sahifalarni bezash tili. 1996-yilda yaratilgan.', 'css')">
+                    <div class="topic-number">05</div>
+                    <div class="topic-icon"><i class="fab fa-css3-alt" style="color:#264de4"></i></div>
+                    <h3>CSS ga kirish</h3>
+                    <p>Tarixi, selektorlar</p>
+                    <span class="topic-tag">selector { }</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('css2', 'Ranglar va fonlar', 'color, background-color, background-image, gradient. Hex, RGB, HSL rang modellari.', 'css')">
+                    <div class="topic-number">06</div>
+                    <div class="topic-icon"><i class="fas fa-palette" style="color:#264de4"></i></div>
+                    <h3>Ranglar va fonlar</h3>
+                    <p>color, background, gradient</p>
+                    <span class="topic-tag">#FF0000</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('css3', 'Flexbox', 'Flexbox - moslashuvchan tartib tizimi. display: flex, justify-content, align-items, flex-direction.', 'css')">
+                    <div class="topic-number">07</div>
+                    <div class="topic-icon"><i class="fas fa-align-center" style="color:#264de4"></i></div>
+                    <h3>Flexbox</h3>
+                    <p>display: flex, justify-content</p>
+                    <span class="topic-tag">display: flex</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('css4', 'Grid', 'Grid - ikki o\'lchamli tartib tizimi. display: grid, grid-template-columns, grid-template-rows.', 'css')">
+                    <div class="topic-number">08</div>
+                    <div class="topic-icon"><i class="fas fa-th" style="color:#264de4"></i></div>
+                    <h3>Grid</h3>
+                    <p>display: grid, grid-template</p>
+                    <span class="topic-tag">display: grid</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('css5', 'Animatsiyalar', 'transition, transform, keyframes, animation. Hover effektlari.', 'css')">
+                    <div class="topic-number">09</div>
+                    <div class="topic-icon"><i class="fas fa-play-circle" style="color:#264de4"></i></div>
+                    <h3>Animatsiyalar</h3>
+                    <p>transition, keyframes, transform</p>
+                    <span class="topic-tag">@keyframes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3-BO'LIM: JavaScript Asoslari -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fab fa-js"></i>
+                <span>JavaScript - Interaktivlik</span>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showTopic('js1', 'JavaScript ga kirish', 'JavaScript - veb-sahifalarni interaktiv qiluvchi til. 1995-yilda Brendan Eich tomonidan yaratilgan.', 'js')">
+                    <div class="topic-number">10</div>
+                    <div class="topic-icon"><i class="fab fa-js" style="color:#f0db4f"></i></div>
+                    <h3>JavaScript ga kirish</h3>
+                    <p>Tarixi, asosiy tushunchalar</p>
+                    <span class="topic-tag">console.log()</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('js2', 'O\'zgaruvchilar va turlar', 'let, const, var. String, Number, Boolean, Array, Object, null, undefined.', 'js')">
+                    <div class="topic-number">11</div>
+                    <div class="topic-icon"><i class="fas fa-database" style="color:#f0db4f"></i></div>
+                    <h3>O'zgaruvchilar va turlar</h3>
+                    <p>let, const, string, number, array</p>
+                    <span class="topic-tag">let x = 5</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('js3', 'Funksiyalar', 'function, arrow functions, parametrlar, qaytarish, callback.', 'js')">
+                    <div class="topic-number">12</div>
+                    <div class="topic-icon"><i class="fas fa-cog" style="color:#f0db4f"></i></div>
+                    <h3>Funksiyalar</h3>
+                    <p>function, arrow, callback</p>
+                    <span class="topic-tag">() => {}</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('js4', 'DOM manipulyatsiyasi', 'document.getElementById, querySelector, innerHTML, addEventListener.', 'js')">
+                    <div class="topic-number">13</div>
+                    <div class="topic-icon"><i class="fas fa-tree" style="color:#f0db4f"></i></div>
+                    <h3>DOM manipulyatsiyasi</h3>
+                    <p>getElementById, addEventListener</p>
+                    <span class="topic-tag">document</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('js5', 'Eventlar', 'click, mouseover, keydown, submit, load. Event listenerlar.', 'js')">
+                    <div class="topic-number">14</div>
+                    <div class="topic-icon"><i class="fas fa-mouse-pointer" style="color:#f0db4f"></i></div>
+                    <h3>Eventlar</h3>
+                    <p>click, mouseover, keydown</p>
+                    <span class="topic-tag">addEventListener</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4-BO'LIM: Amaliy Loyihalar -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-rocket"></i>
+                <span>Amaliy Loyihalar</span>
+            </div>
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showTopic('proj1', 'Shaxsiy portfolio sayti', 'HTML, CSS, JavaScript yordamida shaxsiy portfolio veb-sayt yaratish. Responsive dizayn.', 'project')">
+                    <div class="topic-number">15</div>
+                    <div class="topic-icon"><i class="fas fa-user" style="color:#00c8ff"></i></div>
+                    <h3>Shaxsiy portfolio</h3>
+                    <p>Responsive veb-sayt</p>
+                    <span class="topic-tag">Project</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('proj2', 'Kalkulyator dasturi', 'JavaScript bilan ishlaydigan kalkulyator. Eventlar va funksiyalar.', 'project')">
+                    <div class="topic-number">16</div>
+                    <div class="topic-icon"><i class="fas fa-calculator" style="color:#00c8ff"></i></div>
+                    <h3>Kalkulyator</h3>
+                    <p>JavaScript kalkulyator</p>
+                    <span class="topic-tag">Project</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('proj3', 'Todo ilovasi', 'Vazifalarni boshqaruvchi interaktiv ilova. LocalStorage bilan ma\'lumot saqlash.', 'project')">
+                    <div class="topic-number">17</div>
+                    <div class="topic-icon"><i class="fas fa-check-square" style="color:#00c8ff"></i></div>
+                    <h3>Todo ilovasi</h3>
+                    <p>LocalStorage, DOM manipulyatsiya</p>
+                    <span class="topic-tag">Project</span>
+                </div>
+                <div class="topic-card" onclick="showTopic('proj4', 'So'rovnoma formasi', 'Validatsiyali interaktiv forma. JavaScript tekshiruvi.', 'project')">
+                    <div class="topic-number">18</div>
+                    <div class="topic-icon"><i class="fas fa-file-alt" style="color:#00c8ff"></i></div>
+                    <h3>So'rovnoma formasi</h3>
+                    <p>Form validation</p>
+                    <span class="topic-tag">Project</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="topicModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Three.js 3D Animatsiya -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        const canvas = document.getElementById('canvas-3d');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a2a);
+        scene.fog = new THREE.FogExp2(0x0a0a2a, 0.003);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 14);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+
+        // ========== YORUG'LIK ==========
+        const ambientLight = new THREE.AmbientLight(0x2a2a5a);
+        scene.add(ambientLight);
+        
+        const mainLight = new THREE.DirectionalLight(0xffaa66, 1);
+        mainLight.position.set(2, 5, 3);
+        mainLight.castShadow = true;
+        scene.add(mainLight);
+        
+        const backLight = new THREE.PointLight(0x00c8ff, 0.4);
+        backLight.position.set(-2, 1, -3);
+        scene.add(backLight);
+        
+        const colorLight1 = new THREE.PointLight(0xff44aa, 0.4);
+        colorLight1.position.set(2, 1, 3);
+        scene.add(colorLight1);
+        
+        const colorLight2 = new THREE.PointLight(0x44ffaa, 0.4);
+        colorLight2.position.set(-1, 2, 2);
+        scene.add(colorLight2);
+
+        // ========== 3D BRAUZER OYNALARI ==========
+        const browsers = [];
+        const browserColors = [0x00c8ff, 0xff44aa, 0x44ffaa, 0xffaa44, 0xaa44ff];
+        const browserPositions = [
+            { x: -3, y: 1, z: 0, rx: 0, ry: 0.3, rz: 0 },
+            { x: 3, y: 1, z: 0, rx: 0, ry: -0.3, rz: 0 },
+            { x: 0, y: -0.5, z: -2, rx: 0.2, ry: 0, rz: 0 },
+            { x: -2, y: -1, z: -3, rx: 0.1, ry: 0.2, rz: 0.1 },
+            { x: 2, y: -1, z: -3, rx: 0.1, ry: -0.2, rz: 0.1 }
+        ];
+        
+        browserPositions.forEach((pos, i) => {
+            const group = new THREE.Group();
+            
+            // Brauzer oynasi (yupqa kub)
+            const windowGeo = new THREE.BoxGeometry(1.5, 1.2, 0.1);
+            const windowMat = new THREE.MeshStandardMaterial({ color: browserColors[i], metalness: 0.3, roughness: 0.2 });
+            const windowFrame = new THREE.Mesh(windowGeo, windowMat);
+            group.add(windowFrame);
+            
+            // Ekran (ichki qism)
+            const screenGeo = new THREE.BoxGeometry(1.3, 1.0, 0.05);
+            const screenMat = new THREE.MeshStandardMaterial({ color: 0x1a1a3a, emissive: 0x0a0a2a });
+            const screen = new THREE.Mesh(screenGeo, screenMat);
+            screen.position.z = 0.06;
+            group.add(screen);
+            
+            group.position.set(pos.x, pos.y, pos.z);
+            group.rotation.x = pos.rx;
+            group.rotation.y = pos.ry;
+            group.rotation.z = pos.rz;
+            group.userData = { rotY: pos.ry, speed: 0.003 + Math.random() * 0.005 };
+            scene.add(group);
+            browsers.push(group);
+        });
+
+        // ========== HTML TEGLARI (uchib yuradigan) ==========
+        const tags = [
+            '&lt;html&gt;', '&lt;head&gt;', '&lt;body&gt;', '&lt;div&gt;', '&lt;p&gt;',
+            '&lt;h1&gt;', '&lt;a&gt;', '&lt;img&gt;', '&lt;form&gt;', '&lt;input&gt;',
+            '&lt;button&gt;', '&lt;section&gt;', '&lt;nav&gt;', '&lt;footer&gt;',
+            '&lt;script&gt;', '&lt;style&gt;', '&lt;ul&gt;', '&lt;li&gt;', '&lt;span&gt;', '&lt;table&gt;'
+        ];
+        
+        const tagSprites = [];
+        
+        for (let i = 0; i < 40; i++) {
+            const canvasTag = document.createElement('canvas');
+            canvasTag.width = 256;
+            canvasTag.height = 64;
+            const ctx = canvasTag.getContext('2d');
+            ctx.fillStyle = '#1a1a3a';
+            ctx.fillRect(0, 0, canvasTag.width, canvasTag.height);
+            ctx.fillStyle = '#00c8ff';
+            ctx.font = 'Bold 20px "Fira Code"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(tags[Math.floor(Math.random() * tags.length)], canvasTag.width/2, canvasTag.height/2);
+            ctx.strokeStyle = '#00c8ff';
+            ctx.strokeRect(5, 5, canvasTag.width - 10, canvasTag.height - 10);
+            
+            const texture = new THREE.CanvasTexture(canvasTag);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(material);
+            sprite.scale.set(1.2, 0.3, 1);
+            sprite.position.set((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 10 - 3);
+            sprite.userData = {
+                velocityX: (Math.random() - 0.5) * 0.02,
+                velocityY: (Math.random() - 0.5) * 0.02,
+                velocityZ: (Math.random() - 0.5) * 0.01
+            };
+            scene.add(sprite);
+            tagSprites.push(sprite);
+        }
+
+        // ========== CSS LOGOSI KUBI ==========
+        const cssGroup = new THREE.Group();
+        
+        const cssCubeGeo = new THREE.BoxGeometry(0.9, 0.9, 0.9);
+        const cssCubeMat = new THREE.MeshStandardMaterial({ color: 0x264de4, metalness: 0.6, roughness: 0.3 });
+        const cssCube = new THREE.Mesh(cssCubeGeo, cssCubeMat);
+        cssGroup.add(cssCube);
+        
+        // CSS yozuvi
+        const cssTextCanvas = document.createElement('canvas');
+        cssTextCanvas.width = 256;
+        cssTextCanvas.height = 256;
+        const cssCtx = cssTextCanvas.getContext('2d');
+        cssCtx.fillStyle = '#264de4';
+        cssCtx.fillRect(0, 0, cssTextCanvas.width, cssTextCanvas.height);
+        cssCtx.fillStyle = '#ffffff';
+        cssCtx.font = 'Bold 40px "Fira Code"';
+        cssCtx.textAlign = 'center';
+        cssCtx.textBaseline = 'middle';
+        cssCtx.fillText('CSS', cssTextCanvas.width/2, cssTextCanvas.height/2);
+        
+        const cssTexture = new THREE.CanvasTexture(cssTextCanvas);
+        const cssSpriteMat = new THREE.SpriteMaterial({ map: cssTexture });
+        const cssSprite = new THREE.Sprite(cssSpriteMat);
+        cssSprite.scale.set(0.7, 0.7, 1);
+        cssSprite.position.z = 0.46;
+        cssGroup.add(cssSprite);
+        
+        cssGroup.position.set(-3.5, -1.2, -1);
+        scene.add(cssGroup);
+
+        // ========== JS LOGOSI KUBI ==========
+        const jsGroup = new THREE.Group();
+        
+        const jsCubeGeo = new THREE.BoxGeometry(0.9, 0.9, 0.9);
+        const jsCubeMat = new THREE.MeshStandardMaterial({ color: 0xf0db4f, metalness: 0.3, roughness: 0.4 });
+        const jsCube = new THREE.Mesh(jsCubeGeo, jsCubeMat);
+        jsGroup.add(jsCube);
+        
+        // JS yozuvi
+        const jsTextCanvas = document.createElement('canvas');
+        jsTextCanvas.width = 256;
+        jsTextCanvas.height = 256;
+        const jsCtx = jsTextCanvas.getContext('2d');
+        jsCtx.fillStyle = '#f0db4f';
+        jsCtx.fillRect(0, 0, jsTextCanvas.width, jsTextCanvas.height);
+        jsCtx.fillStyle = '#000000';
+        jsCtx.font = 'Bold 40px "Fira Code"';
+        jsCtx.textAlign = 'center';
+        jsCtx.textBaseline = 'middle';
+        jsCtx.fillText('JS', jsTextCanvas.width/2, jsTextCanvas.height/2);
+        
+        const jsTexture = new THREE.CanvasTexture(jsTextCanvas);
+        const jsSpriteMat = new THREE.SpriteMaterial({ map: jsTexture });
+        const jsSprite = new THREE.Sprite(jsSpriteMat);
+        jsSprite.scale.set(0.7, 0.7, 1);
+        jsSprite.position.z = 0.46;
+        jsGroup.add(jsSprite);
+        
+        jsGroup.position.set(3.5, -1.2, -1);
+        scene.add(jsGroup);
+
+        // ========== INTERNET TARMOG'I (chiziqlar) ==========
+        const nodeCount = 25;
+        const nodes = [];
+        
+        for (let i = 0; i < nodeCount; i++) {
+            const nodeGeo = new THREE.SphereGeometry(0.08, 16, 16);
+            const nodeMat = new THREE.MeshStandardMaterial({ color: 0x00c8ff, emissive: 0x00c8ff, emissiveIntensity: 0.5 });
+            const node = new THREE.Mesh(nodeGeo, nodeMat);
+            node.position.set((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8 - 4);
+            scene.add(node);
+            nodes.push(node);
+        }
+        
+        // Chiziqlar
+        const lines = [];
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                if (Math.random() > 0.9) {
+                    const points = [nodes[i].position.clone(), nodes[j].position.clone()];
+                    const geo = new THREE.BufferGeometry().setFromPoints(points);
+                    const mat = new THREE.LineBasicMaterial({ color: 0x00c8ff, transparent: true, opacity: 0.2 });
+                    const line = new THREE.Line(geo, mat);
+                    scene.add(line);
+                    lines.push(line);
+                }
+            }
+        }
+
+        // ========== ZARRALAR ==========
+        const particleCount = 3000;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePos = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+            particlePos[i*3] = (Math.random() - 0.5) * 25;
+            particlePos[i*3+1] = (Math.random() - 0.5) * 15;
+            particlePos[i*3+2] = (Math.random() - 0.5) * 20 - 8;
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0x00c8ff, size: 0.04, transparent: true, blending: THREE.AdditiveBlending });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        scene.add(particles);
+
+        // Yulduzlar
+        const starCount = 1500;
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            starPos[i*3] = (Math.random() - 0.5) * 200;
+            starPos[i*3+1] = (Math.random() - 0.5) * 120;
+            starPos[i*3+2] = (Math.random() - 0.5) * 100 - 50;
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.06 });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
+
+        // ========== ANIMATSIYA ==========
+        let time = 0;
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+            
+            // Brauzerlarni aylantirish
+            browsers.forEach((browser, i) => {
+                browser.rotation.y += 0.003;
+            });
+            
+            // HTML teglarini harakatlantirish
+            tagSprites.forEach(sprite => {
+                sprite.position.x += sprite.userData.velocityX;
+                sprite.position.y += sprite.userData.velocityY;
+                sprite.position.z += sprite.userData.velocityZ;
+                
+                if (Math.abs(sprite.position.x) > 8) sprite.userData.velocityX *= -1;
+                if (Math.abs(sprite.position.y) > 6) sprite.userData.velocityY *= -1;
+                if (Math.abs(sprite.position.z) > 6) sprite.userData.velocityZ *= -1;
+                
+                sprite.material.rotation += 0.01;
+            });
+            
+            // CSS va JS kublarini aylantirish
+            cssGroup.rotation.y += 0.01;
+            cssGroup.rotation.x += 0.005;
+            jsGroup.rotation.y -= 0.008;
+            jsGroup.rotation.x += 0.007;
+            
+            // Tarmoq chiziqlarini yangilash
+            lines.forEach(line => {
+                line.geometry.dispose();
+                const points = [];
+                const idx = Math.floor(Math.random() * lines.length);
+                if (lines.indexOf(line) % 2 === 0) {
+                    const p1 = nodes[Math.floor(Math.random() * nodes.length)].position;
+                    const p2 = nodes[Math.floor(Math.random() * nodes.length)].position;
+                    points.push(p1.clone(), p2.clone());
+                    const newGeo = new THREE.BufferGeometry().setFromPoints(points);
+                    line.geometry = newGeo;
+                }
+            });
+            
+            // Zarralar va yulduzlar
+            particles.rotation.y += 0.0005;
+            stars.rotation.y += 0.0002;
+            
+            // Rangli chiroqlar
+            colorLight1.intensity = 0.4 + Math.sin(time * 2) * 0.2;
+            colorLight2.intensity = 0.4 + Math.cos(time * 1.8) * 0.2;
+            
+            // Kamera
+            camera.position.x += (Math.sin(time * 0.08) * 0.3 - camera.position.x) * 0.02;
+            camera.position.y += (Math.sin(time * 0.12) * 0.2 - camera.position.y) * 0.02;
+            camera.lookAt(0, 0, 0);
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        console.log('🌐 Web Dasturlash 3D animatsiyasi ishga tushdi!');
+    </script>
+
+    <script>
+        const codeExamples = {
+            html1: '<!DOCTYPE html>\n<html>\n<head>\n    <title>My Website</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>',
+            html2: '<div class="container">\n    <h1>Heading</h1>\n    <p>Paragraph text</p>\n    <span>Inline text</span>\n</div>',
+            html3: '<img src="image.jpg" alt="Description">\n<a href="https://example.com">Link</a>\n<div id="main" class="content">Text</div>',
+            html4: '<form action="/submit">\n    <input type="text" name="name">\n    <textarea rows="5"></textarea>\n    <select><option>1</option></select>\n    <button type="submit">Send</button>\n</form>',
+            css1: '.container {\n    width: 100%;\n    max-width: 1200px;\n    margin: 0 auto;\n    padding: 20px;\n}',
+            css2: 'body {\n    background: linear-gradient(135deg, #667eea, #764ba2);\n    color: #fff;\n}\n\nh1 {\n    color: #ff6600;\n}',
+            css3: '.flex-container {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    gap: 20px;\n    flex-wrap: wrap;\n}',
+            css4: '.grid-container {\n    display: grid;\n    grid-template-columns: repeat(3, 1fr);\n    gap: 20px;\n}\n\n.item {\n    grid-column: span 2;\n}',
+            css5: '.box {\n    transition: all 0.3s ease;\n}\n\n.box:hover {\n    transform: scale(1.1);\n}\n\n@keyframes fade {\n    from { opacity: 0; }\n    to { opacity: 1; }\n}',
+            js1: 'console.log("Hello, World!");\n\nalert("Welcome to JavaScript!");\n\ndocument.write("<h1>JavaScript</h1>");',
+            js2: 'let name = "Skills";\nconst age = 18;\nvar isStudent = true;\nlet numbers = [1, 2, 3, 4, 5];\nlet person = { name: "John", age: 30 };',
+            js3: 'function add(a, b) {\n    return a + b;\n}\n\nconst multiply = (a, b) => a * b;\n\nfunction greet(name = "World") {\n    return `Hello, ${name}!`;\n}',
+            js4: 'const element = document.getElementById("myId");\nconst elements = document.querySelectorAll(".myClass");\nelement.innerHTML = "New content";\nelement.style.color = "red";',
+            js5: 'button.addEventListener("click", () => {\n    console.log("Button clicked!");\n});\n\ninput.addEventListener("keydown", (e) => {\n    console.log(e.key);\n});',
+            proj1: 'Shaxsiy portfolio:\n- HTML strukturasi\n- CSS Flexbox/Grid\n- Responsive dizayn\n- JavaScript interaktivlik',
+            proj2: 'Kalkulyator:\n- HTML tugmalar\n- CSS grid dizayn\n- JavaScript hisoblash logikasi\n- Event listenerlar',
+            proj3: 'Todo ilovasi:\n- Vazifa qo\'shish/o\'chirish\n- LocalStorage da saqlash\n- Filter (all/active/completed)\n- DOM manipulyatsiya',
+            proj4: 'So\'rovnoma formasi:\n- Validatsiya\n- Formani tekshirish\n- Xato xabarlari\n- Ma\'lumotlarni yig\'ish'
+        };
+
+        const facts = [
+            "HTML 1991-yilda Tim Berners-Lee tomonidan yaratilgan!",
+            "CSS 1996-yilda Håkon Wium Lie tomonidan yaratilgan.",
+            "JavaScript 10 kunda yozilgan! Brendan Eich 1995-yilda.",
+            "Dunyodagi birinchi veb-sayt hali ham ishlaydi: info.cern.ch",
+            "HTML5 2014-yilda standart sifatida qabul qilingan.",
+            "JavaScript so'zida 'Java' yo'q, bu marketing hiylasi edi.",
+            "CSS Flexbox 2009-yilda, Grid esa 2017-yilda keng qo'llanila boshlandi."
+        ];
+
+        function showTopic(id, title, content, lang) {
+            const code = codeExamples[id] || '// Kod misoli\nconsole.log("Hello!");';
+            
+            document.getElementById('modalTitle').innerHTML = `${title}`;
+            document.getElementById('modalBody').innerHTML = `
+                <p>${content}</p>
+                <div class="code-block">
+                    <i class="fas fa-file-code" style="margin-right: 8px; color: #00c8ff;"></i>
+                    <strong>Kod misoli:</strong><br>
+                    <code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>
+                </div>
+                <div class="fact-box">
+                    <i class="fas fa-lightbulb" style="margin-right: 8px; color: #f0db4f;"></i>
+                    <strong>Qiziqarli fakt:</strong> ${facts[Math.floor(Math.random() * facts.length)]}
+                </div>
+            `;
+            document.getElementById('topicModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('topicModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('topicModal')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
